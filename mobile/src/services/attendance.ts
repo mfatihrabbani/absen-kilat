@@ -1,4 +1,4 @@
-import { mockListRange } from '@/mocks/attendances';
+import { mockFindById, mockListRange } from '@/mocks/attendances';
 import type { Attendance } from '@/types/attendance';
 
 /** Simulasi latensi jaringan supaya state loading ikut teruji. */
@@ -15,4 +15,14 @@ export type AttendanceQuery = { date: string } | { from: string; to: string };
 export async function listAttendances(query: AttendanceQuery): Promise<Attendance[]> {
   await delay(300);
   return 'date' in query ? mockListRange(query.date, query.date) : mockListRange(query.from, query.to);
+}
+
+/**
+ * Satu catatan absen milik pengguna.
+ * Kontrak: `GET /api/attendance/:id` → `{ data: Attendance }`, 404 bila tidak ada.
+ * Mengembalikan `null` bila tidak ditemukan.
+ */
+export async function getAttendance(id: number): Promise<Attendance | null> {
+  await delay(200);
+  return mockFindById(id) ?? null;
 }

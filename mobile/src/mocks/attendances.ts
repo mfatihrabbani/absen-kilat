@@ -70,3 +70,7 @@ export function mockListRange(from: string, to: string): Attendance[] {
     })
     .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 }
+
+export function mockFindById(id: number): Attendance | undefined {
+  return mockAttendances.find((a) => a.id === id);
+}
