@@ -6,22 +6,26 @@ import { Colors, Radius, Spacing } from '@/constants/theme';
 import { checkPassword, PASSWORD_RULES } from '@/lib/validation';
 
 /** Daftar aturan kata sandi yang tercentang hijau saat terpenuhi (`.ak-rules`). */
-export function PasswordRules({ value }: { value: string }) {
-  const ok = checkPassword(value);
+export function PasswordRules({
+  value,
+  extra = [],
+}: {
+  value: string;
+  /** Aturan tambahan, mis. "Berbeda dari kata sandi saat ini". */
+  extra?: { label: string; ok: boolean }[];
+}) {
+  const checks = checkPassword(value);
+  const rules = [...PASSWORD_RULES.map((r) => ({ label: r.label, ok: checks[r.key] })), ...extra];
   return (
     <View style={styles.rules}>
-      {PASSWORD_RULES.map((r) => (
+      {rules.map((r) => (
         <View
-          key={r.key}
+          key={r.label}
           style={styles.rule}
           accessible
-          accessibilityLabel={`${r.label}: ${ok[r.key] ? 'terpenuhi' : 'belum terpenuhi'}`}>
-          <CheckCircleIcon
-            size={18}
-            weight="fill"
-            color={ok[r.key] ? Colors.positive : Colors.textFaint}
-          />
-          <AppText variant="bodySm" color={ok[r.key] ? 'text' : 'textMuted'}>
+          accessibilityLabel={`${r.label}: ${r.ok ? 'terpenuhi' : 'belum terpenuhi'}`}>
+          <CheckCircleIcon size={18} weight="fill" color={r.ok ? Colors.positive : Colors.textFaint} />
+          <AppText variant="bodySm" color={r.ok ? 'text' : 'textMuted'}>
             {r.label}
           </AppText>
         </View>

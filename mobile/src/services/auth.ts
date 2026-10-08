@@ -125,3 +125,18 @@ export async function resendVerification(email: string): Promise<void> {
   await delay(600);
   pendingEmail = email;
 }
+
+/**
+ * Ganti kata sandi akun yang sedang masuk; sesi di perangkat lain dikeluarkan.
+ * Kontrak: Better Auth `POST /api/auth/change-password`
+ * `{ currentPassword, newPassword, revokeOtherSessions: true }`.
+ */
+export async function changePassword(input: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<void> {
+  await delay(900);
+  if (input.currentPassword === 'salah12345') {
+    throw new AuthError('Kata sandi saat ini salah. Coba lagi atau atur ulang lewat email.', 'password');
+  }
+}

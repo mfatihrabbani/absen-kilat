@@ -4,9 +4,9 @@ import { Colors } from '@/constants/theme';
 import { useSession } from '@/lib/session';
 
 /**
- * Navigasi autentikasi. Masuk/daftar/lupa sandi hanya untuk tamu, verifikasi untuk
+ * Navigasi autentikasi. Masuk/daftar hanya untuk tamu, verifikasi untuk
  * akun yang emailnya belum terverifikasi;
- * atur sandi & konfirmasi verifikasi tetap bisa dibuka dari tautan email kapan pun.
+ * lupa/atur sandi & konfirmasi verifikasi tetap bisa dibuka kapan pun (mis. dari email).
  */
 export default function AuthLayout() {
   const session = useSession();
@@ -17,12 +17,13 @@ export default function AuthLayout() {
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="masuk" />
         <Stack.Screen name="daftar" />
-        <Stack.Screen name="lupa-sandi" />
       </Stack.Protected>
       {/* Verifikasi: sesudah daftar, atau saat masuk dengan email yang belum diverifikasi. */}
       <Stack.Protected guard={!verified}>
         <Stack.Screen name="verifikasi" />
       </Stack.Protected>
+      {/* Lupa sandi juga dibuka dari Ganti Kata Sandi saat sudah masuk. */}
+      <Stack.Screen name="lupa-sandi" />
       <Stack.Screen name="atur-sandi" />
       <Stack.Screen name="email-terverifikasi" />
     </Stack>

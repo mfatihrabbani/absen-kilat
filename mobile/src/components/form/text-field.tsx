@@ -14,10 +14,23 @@ export type TextFieldProps = Omit<TextInputProps, 'style'> & {
   password?: boolean;
   /** Konten tambahan di bawah input (mis. daftar aturan kata sandi). */
   below?: ReactNode;
+  /** Tandai field tidak valid tanpa pesan (pesan ditampilkan di tempat lain). */
+  invalid?: boolean;
 };
 
 /** Field form berlabel (`.ak-field`): input 52px, cincin fokus oranye, galat dengan ikon. */
-export function TextField({ ref, label, error, password, below, onFocus, onBlur, ...rest }: TextFieldProps) {
+export function TextField({
+  ref,
+  label,
+  error,
+  password,
+  below,
+  invalid,
+  onFocus,
+  onBlur,
+  ...rest
+}: TextFieldProps) {
+  const isInvalid = !!error || !!invalid;
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -31,7 +44,7 @@ export function TextField({ ref, label, error, password, below, onFocus, onBlur,
           ref={ref}
           accessibilityLabel={label}
           accessibilityHint={error ?? undefined}
-          aria-invalid={!!error}
+          aria-invalid={isInvalid}
           placeholderTextColor={Colors.textFaint}
           secureTextEntry={password && !visible}
           autoCapitalize={password ? 'none' : rest.autoCapitalize}
@@ -48,7 +61,7 @@ export function TextField({ ref, label, error, password, below, onFocus, onBlur,
             styles.input,
             password && styles.inputTrail,
             focused && styles.focused,
-            !!error && styles.invalid,
+            isInvalid && styles.invalid,
           ]}
           {...rest}
         />

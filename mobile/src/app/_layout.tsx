@@ -57,6 +57,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="detail/[id]" />
             <Stack.Screen name="profil" />
+            <Stack.Screen name="ganti-sandi" />
             <Stack.Screen
               name="absen"
               options={{

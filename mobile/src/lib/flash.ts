@@ -1,8 +1,9 @@
 import type { Icon } from '@/components/icons';
 
 /**
- * Pesan "flash" untuk banner atas: disetel sebelum navigasi (mis. sesudah absen
- * berhasil) atau saat layar aktif, lalu ditampilkan sekali oleh layar yang fokus.
+ * Pesan "flash" untuk banner atas, ditampilkan sekali oleh layar yang fokus.
+ * - `setFlash`: tampil di layar berikutnya yang mendapat fokus (mis. sesudah absen lalu kembali).
+ * - `showFlash`: tampil seketika di layar yang sedang aktif.
  */
 export type FlashMessage = { title: string; body?: string; icon?: Icon };
 
@@ -10,6 +11,10 @@ let pending: FlashMessage | null = null;
 const listeners = new Set<() => void>();
 
 export function setFlash(message: FlashMessage) {
+  pending = message;
+}
+
+export function showFlash(message: FlashMessage) {
   pending = message;
   listeners.forEach((l) => l());
 }
@@ -21,7 +26,7 @@ export function consumeFlash(): FlashMessage | null {
   return m;
 }
 
-/** Dengarkan pesan baru (untuk banner di layar yang sedang aktif). */
+/** Dengarkan `showFlash` (untuk banner di layar yang sedang aktif). */
 export function onFlash(listener: () => void) {
   listeners.add(listener);
   return () => {

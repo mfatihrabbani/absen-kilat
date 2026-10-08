@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
@@ -22,7 +23,7 @@ import { ListGroup } from '@/components/ui/list';
 import { PushedScreen } from '@/components/ui/pushed-screen';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/hooks/use-profile';
-import { setFlash } from '@/lib/flash';
+import { showFlash } from '@/lib/flash';
 import { hapticTap } from '@/lib/haptics';
 import { pickProfileImage } from '@/lib/pick-image';
 import { syncReminders } from '@/lib/reminders';
@@ -37,6 +38,7 @@ const NOTIFICATIONS: { key: keyof NotificationPrefs; title: string; subtitle: st
 
 /** Profil Saya: identitas, pengaturan akun & notifikasi, dan keluar. */
 export default function ProfilScreen() {
+  const router = useRouter();
   const { profile, setProfile, error, reload } = useProfile();
   const [photoSheet, setPhotoSheet] = useState(false);
   const [savingPhoto, setSavingPhoto] = useState(false);
@@ -71,7 +73,7 @@ export default function ProfilScreen() {
     try {
       const image = await updateProfilePhoto(picked);
       setProfile((p) => (p ? { ...p, image } : p));
-      setFlash(
+      showFlash(
         picked
           ? {
               title: 'Foto profil diperbarui',
@@ -85,7 +87,7 @@ export default function ProfilScreen() {
       );
     } catch (e) {
       setProfile((p) => (p ? { ...p, image: previous } : p));
-      setFlash({
+      showFlash({
         title: 'Gagal menyimpan foto',
         body: e instanceof Error ? e.message : 'Coba lagi.',
         icon: WarningCircleIcon,
@@ -104,7 +106,7 @@ export default function ProfilScreen() {
       await updateNotificationPrefs(next);
       const allowed = await syncReminders(next);
       if (!allowed) {
-        setFlash({
+        showFlash({
           title: 'Izin notifikasi ditolak',
           body: 'Aktifkan notifikasi Absen Kilat di Pengaturan agar pengingat muncul.',
           icon: WarningCircleIcon,
@@ -112,7 +114,7 @@ export default function ProfilScreen() {
       }
     } catch (e) {
       setProfile((p) => (p ? { ...p, notificationPrefs: previous } : p));
-      setFlash({
+      showFlash({
         title: 'Gagal menyimpan pengaturan',
         body: e instanceof Error ? e.message : 'Coba lagi.',
         icon: WarningCircleIcon,
@@ -123,7 +125,7 @@ export default function ProfilScreen() {
   const saveName = async (name: string) => {
     await updateName(name);
     setProfile((p) => (p ? { ...p, name } : p));
-    setFlash({ title: 'Nama diperbarui', body: name });
+    showFlash({ title: 'Nama diperbarui', body: name });
   };
 
   return (
@@ -144,7 +146,11 @@ export default function ProfilScreen() {
             onPress={() => setNameSheet(true)}
           />
           <ProfileRow icon={EnvelopeSimpleIcon} title="Email" subtitle={profile.email} />
-          <ProfileRow icon={LockKeyIcon} title="Ganti kata sandi" onPress={() => {}} />
+          <ProfileRow
+            icon={LockKeyIcon}
+            title="Ganti kata sandi"
+            onPress={() => router.push('/ganti-sandi')}
+          />
         </ListGroup>
       </View>
 
