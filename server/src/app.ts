@@ -6,6 +6,7 @@ import { auth } from './auth';
 import { env } from './env';
 import { HttpError } from './lib/http-error';
 import { attendanceRouter } from './routes/attendance';
+import { verifyLinkRouter } from './routes/verify-link';
 
 /** CORS sederhana: izinkan asal mana pun (aplikasi Expo web/dev) dengan kredensial. */
 const cors: RequestHandler = (req, res, next) => {
@@ -54,6 +55,7 @@ export function createApp() {
   app.use(express.json());
   app.use('/uploads', express.static(env.uploadDir, { maxAge: '7d', fallthrough: false }));
   app.use('/api/attendance', attendanceRouter);
+  app.use('/api', verifyLinkRouter);
 
   app.use('/api', (_req, _res, next) => next(new HttpError(404, 'Endpoint tidak ditemukan')));
   app.use(errorHandler);

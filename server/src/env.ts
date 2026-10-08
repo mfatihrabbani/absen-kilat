@@ -15,7 +15,19 @@ export const env = {
   /** Asal yang dipercaya untuk request auth: skema deep link aplikasi + dev server Expo. */
   trustedOrigins: (
     process.env.TRUSTED_ORIGINS ?? 'absenkilat://,exp://,http://localhost:8081'
-  ).split(',').map((o) => o.trim()).filter(Boolean),
+  )
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean),
+  /** Tujuan redirect setelah tautan verifikasi email dibuka (deep link aplikasi). */
+  appVerifiedUrl: process.env.APP_VERIFIED_URL ?? 'absenkilat://email-terverifikasi',
+  smtp: {
+    host: process.env.SMTP_HOST ?? '',
+    port: Number(process.env.SMTP_PORT ?? 587),
+    user: process.env.SMTP_USER ?? '',
+    pass: process.env.SMTP_PASS ?? '',
+    from: process.env.MAIL_FROM ?? 'Absen Kilat <no-reply@absenkilat.local>',
+  },
 };
 
 /** Secret bawaan khusus pengembangan; produksi wajib mengisi `BETTER_AUTH_SECRET`. */

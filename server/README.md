@@ -39,6 +39,8 @@ Akun contoh dari `db:seed`: **rina.kartika@contoh.id** / **rahasia123**.
 | `BETTER_AUTH_URL` | `http://localhost:PORT` | URL publik server untuk Better Auth |
 | `BETTER_AUTH_SECRET` | secret pengembangan | **Wajib** diisi di produksi |
 | `TRUSTED_ORIGINS` | `absenkilat://,exp://,http://localhost:8081` | Asal yang dipercaya untuk request auth |
+| `APP_VERIFIED_URL` | `absenkilat://email-terverifikasi` | Tujuan redirect tautan verifikasi |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | — | Pengiriman email; kosongkan host untuk mode konsol |
 
 ## Autentikasi
 
@@ -46,6 +48,19 @@ Memakai [Better Auth](https://better-auth.com) (email & kata sandi) di `/api/aut
 mis. `POST /api/auth/sign-up/email`, `POST /api/auth/sign-in/email`, `POST /api/auth/sign-out`,
 `GET /api/auth/get-session`. Aplikasi mobile memakai `@better-auth/expo` sehingga cookie sesi
 disimpan di secure storage. Semua endpoint `/api/attendance` wajib login (401 bila tidak).
+
+### Daftar & verifikasi email
+
+1. `POST /api/auth/sign-up/email` `{ name, email, password }` — akun dibuat belum aktif; email berisi
+   **kode 6 digit** (berlaku 10 menit) dan tautan verifikasi dikirim otomatis.
+2. Verifikasi dengan salah satu cara:
+   - `POST /api/auth/email-otp/verify-email` `{ email, otp }` — langsung membuat sesi (auto sign-in).
+   - Tautan di email `GET /api/verify-email-link?email=&otp=` → redirect ke `APP_VERIFIED_URL`
+     (`absenkilat://email-terverifikasi`, atau `?error=invalid_token` bila gagal).
+3. Kirim ulang kode: `POST /api/auth/email-otp/send-verification-otp` `{ email, type: "email-verification" }`.
+
+Masuk sebelum verifikasi menghasilkan `403 EMAIL_NOT_VERIFIED`. Tanpa `SMTP_HOST`, email dicetak
+ke konsol server (berguna untuk pengembangan).
 
 ## API
 
