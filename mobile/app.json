@@ -46,6 +46,14 @@
         {
           "locationWhenInUsePermission": "Absen Kilat memerlukan lokasi untuk mencatat koordinat GPS saat kamu absen."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Absen Kilat memerlukan akses galeri untuk memilih foto profil.",
+          "cameraPermission": "Absen Kilat memerlukan kamera untuk mengambil foto selfie dan foto profil.",
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {

@@ -1,4 +1,4 @@
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useIsFocused } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CheckCircleIcon } from '@/components/icons';
 import { AppText } from '@/components/ui/text';
 import { Colors, Radius, Shadow, Spacing } from '@/constants/theme';
-import { consumeFlash, type FlashMessage } from '@/lib/flash';
+import { consumeFlash, onFlash, type FlashMessage } from '@/lib/flash';
 
 const VISIBLE_MS = 3500;
 
@@ -20,16 +20,22 @@ export function FlashBanner() {
   const [message, setMessage] = useState<FlashMessage | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  useFocusEffect(
-    useCallback(() => {
-      const m = consumeFlash();
-      if (!m) return;
-      setMessage(m);
-      AccessibilityInfo.announceForAccessibility(`${m.title}. ${m.body ?? ''}`);
-      clearTimeout(timer.current);
-      timer.current = setTimeout(() => setMessage(null), VISIBLE_MS);
-    }, []),
-  );
+  const focused = useIsFocused();
+
+  const show = useCallback(() => {
+    const m = consumeFlash();
+    if (!m) return;
+    setMessage(m);
+    AccessibilityInfo.announceForAccessibility(`${m.title}. ${m.body ?? ''}`);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setMessage(null), VISIBLE_MS);
+  }, []);
+
+  // Pesan yang disetel sebelum pindah layar tampil saat layar ini mendapat fokus.
+  useFocusEffect(show);
+
+  // Pesan baru saat layar ini sedang aktif langsung ditampilkan.
+  useEffect(() => (focused ? onFlash(show) : undefined), [focused, show]);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 

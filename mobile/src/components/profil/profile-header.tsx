@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { CameraIcon, SealCheckIcon } from '@/components/icons';
 import { Chip } from '@/components/ui/chip';
@@ -11,18 +11,27 @@ import type { Profile } from '@/types/profile';
 export function ProfileHeader({
   profile,
   onChangePhoto,
+  busy,
 }: {
   profile: Profile;
   onChangePhoto: () => void;
+  /** Foto sedang diunggah. */
+  busy?: boolean;
 }) {
   return (
     <View style={styles.head}>
       <View style={styles.avatarWrap}>
         <UserAvatar name={profile.name} image={profile.image} size={96} />
+        {busy && (
+          <View style={styles.busy}>
+            <ActivityIndicator color={Colors.onPrimary} />
+          </View>
+        )}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Ubah foto profil"
           hitSlop={6}
+          disabled={busy}
           onPress={onChangePhoto}
           style={({ pressed }) => [styles.avatarBtn, pressed && { transform: [{ scale: 0.95 }] }]}>
           <CameraIcon size={16} weight="fill" color={Colors.onPrimary} />
@@ -44,6 +53,13 @@ export function ProfileHeader({
 const styles = StyleSheet.create({
   head: { alignItems: 'center', gap: Spacing.two, paddingTop: Spacing.two },
   avatarWrap: { marginBottom: Spacing.two },
+  busy: {
+    ...StyleSheet.absoluteFill,
+    borderRadius: 48,
+    backgroundColor: 'rgba(29, 30, 28, 0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   avatarBtn: {
     position: 'absolute',
     right: -2,
