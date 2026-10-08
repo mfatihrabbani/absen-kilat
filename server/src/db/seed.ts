@@ -1,12 +1,13 @@
 import { eq } from 'drizzle-orm';
 
+import { DEMO_USER_ID } from '../lib/demo-user';
 import { officeDateKey, officeDayRange, statusFor } from '../lib/attendance-rules';
 import { client, db } from './index';
 import { attendances, users } from './schema';
 
 /** Pengguna contoh untuk pengembangan lokal (sebelum autentikasi aktif). */
 export const DEMO_USER = {
-  id: 'demo-user',
+  id: DEMO_USER_ID,
   name: 'Rina Kartika',
   email: 'rina.kartika@contoh.id',
   emailVerified: true,
