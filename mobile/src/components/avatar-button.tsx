@@ -14,8 +14,8 @@ export function AvatarButton() {
     <IconButton
       accessibilityLabel={`Buka Profil Saya, ${user.name}`}
       onPress={() => router.push('/profil')}>
-      {user.avatarUrl ? (
-        <Image source={user.avatarUrl} style={StyleSheet.absoluteFill} contentFit="cover" />
+      {user.image ? (
+        <Image source={user.image} style={StyleSheet.absoluteFill} contentFit="cover" />
       ) : (
         <AppText variant="label">{initialsOf(user.name)}</AppText>
       )}

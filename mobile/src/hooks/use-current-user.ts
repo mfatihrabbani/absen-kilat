@@ -1,20 +1,13 @@
-/** Pengguna yang sedang masuk. Sementara data tiruan sampai autentikasi tersambung. */
-export type CurrentUser = {
-  id: number;
-  name: string;
-  email: string;
-  avatarUrl: string | null;
-};
+import { useSession, type SessionUser } from '@/lib/session';
 
-const MOCK_USER: CurrentUser = {
-  id: 1,
-  name: 'Rina Kartika',
-  email: 'rina.kartika@contoh.id',
-  avatarUrl: null,
-};
+/** Pengguna yang sedang masuk. */
+export type CurrentUser = SessionUser;
 
+const GUEST: CurrentUser = { id: '', name: 'Tamu', email: '', emailVerified: false, image: null };
+
+/** Pengguna dari sesi aktif (layar aplikasi hanya terjangkau saat sudah masuk). */
 export function useCurrentUser(): CurrentUser {
-  return MOCK_USER;
+  return useSession().user ?? GUEST;
 }
 
 /** `Rina Kartika` → `RK` */

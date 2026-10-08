@@ -3,7 +3,27 @@
  * Kontrak server: Better Auth di `/api/auth/*` (sign-up/email, sign-in/email, ...).
  */
 
+import { setSessionUser, type SessionUser } from '@/lib/session';
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Akun contoh untuk data tiruan. */
+const MOCK_USER: SessionUser = {
+  id: 'demo-user',
+  name: 'Rina Kartika',
+  email: 'rina.kartika@contoh.id',
+  emailVerified: true,
+  image: null,
+};
+
+/** `budi.santoso@x.id` → `Budi Santoso` (nama tiruan dari email). */
+const nameFromEmail = (email: string) =>
+  email
+    .split('@')[0]
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((p) => p[0].toUpperCase() + p.slice(1))
+    .join(' ');
 
 /** Galat autentikasi dengan pesan siap tampil; `field` menunjuk input yang bermasalah. */
 export class AuthError extends Error {
@@ -17,6 +37,7 @@ export class AuthError extends Error {
 
 /** Email yang menunggu verifikasi setelah daftar (dipakai layar verifikasi). */
 let pendingEmail: string | null = null;
+let pendingName: string | null = null;
 export const getPendingEmail = () => pendingEmail;
 
 export type SignUpInput = { name: string; email: string; password: string };
@@ -28,6 +49,7 @@ export async function signUp(input: SignUpInput): Promise<void> {
     throw new AuthError('Email ini sudah terdaftar. Masuk atau gunakan email lain.', 'email');
   }
   pendingEmail = input.email.trim();
+  pendingName = input.name.trim();
 }
 
 export type SignInInput = { email: string; password: string };
@@ -38,6 +60,18 @@ export async function signIn(input: SignInInput): Promise<void> {
   if (input.password === 'salah12345') {
     throw new AuthError('Email atau kata sandi salah. Periksa lagi lalu coba masuk.');
   }
+  const email = input.email.trim();
+  setSessionUser(
+    email.toLowerCase() === MOCK_USER.email
+      ? MOCK_USER
+      : { ...MOCK_USER, id: `mock-${email}`, email, name: nameFromEmail(email) },
+  );
+}
+
+/** Keluar dari sesi saat ini. */
+export async function signOut(): Promise<void> {
+  await delay(300);
+  setSessionUser(null);
 }
 
 /** Email terakhir yang meminta reset kata sandi (ditampilkan di layar atur sandi). */
@@ -71,6 +105,13 @@ export async function verifyEmail(input: { email: string; code: string }): Promi
       'code',
     );
   }
+  // Setelah verifikasi, pengguna langsung masuk.
+  setSessionUser({
+    ...MOCK_USER,
+    id: `mock-${input.email}`,
+    email: input.email,
+    name: pendingName ?? nameFromEmail(input.email),
+  });
 }
 
 /** Kirim ulang kode verifikasi email. */
