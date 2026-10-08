@@ -15,6 +15,7 @@ declare module 'express-serve-static-core' {
 export async function requireUser(req: Request, _res: Response, next: NextFunction) {
   const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
   if (!session) throw new HttpError(401, 'Silakan masuk terlebih dahulu');
+  if (!session.user.emailVerified) throw new HttpError(403, 'Verifikasi email terlebih dahulu');
   req.userId = session.user.id;
   next();
 }

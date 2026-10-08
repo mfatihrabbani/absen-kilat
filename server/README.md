@@ -59,7 +59,8 @@ disimpan di secure storage. Semua endpoint `/api/attendance` wajib login (401 bi
      (`absenkilat://email-terverifikasi`, atau `?error=invalid_token` bila gagal).
 3. Kirim ulang kode: `POST /api/auth/email-otp/send-verification-otp` `{ email, type: "email-verification" }`.
 
-Masuk sebelum verifikasi menghasilkan `403 EMAIL_NOT_VERIFIED`. Tanpa `SMTP_HOST`, email dicetak
+Masuk: `POST /api/auth/sign-in/email` `{ email, password }` → sesi (cookie). Percobaan login dibatasi
+5 kali/menit per IP (429). Masuk sebelum verifikasi menghasilkan `403 EMAIL_NOT_VERIFIED`. Tanpa `SMTP_HOST`, email dicetak
 ke konsol server (berguna untuk pengembangan).
 
 ## API

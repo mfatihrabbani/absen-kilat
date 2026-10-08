@@ -42,6 +42,18 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // perpanjang sesi sekali sehari
   },
   trustedOrigins: env.trustedOrigins,
+  // Batasi percobaan login/daftar/OTP per IP untuk mencegah tebak-tebakan kata sandi.
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 100,
+    customRules: {
+      '/sign-in/email': { window: 60, max: 5 },
+      '/sign-up/email': { window: 60, max: 5 },
+      '/email-otp/verify-email': { window: 60, max: 10 },
+      '/email-otp/send-verification-otp': { window: 60, max: 3 },
+    },
+  },
   plugins: [
     expo(),
     // Verifikasi email memakai kode 6 digit (sesuai layar verifikasi aplikasi).
