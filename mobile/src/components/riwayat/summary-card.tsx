@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Svg, { Defs, Line, Pattern, Rect } from 'react-native-svg';
 
+import { LateStripes, STATUS } from '@/components/attendance/status';
 import { ArrowDownLeftIcon, ArrowUpRightIcon, SignInIcon, TimerIcon, type Icon } from '@/components/icons';
 import { Card } from '@/components/ui/card';
 import { Segmented } from '@/components/ui/segmented';
@@ -34,21 +34,6 @@ export function rangeOf(selected: string, range: Range) {
     start: new Date(sel.getFullYear(), sel.getMonth(), 1, 12),
     end: new Date(sel.getFullYear(), sel.getMonth() + 1, 0, 12),
   };
-}
-
-/** Segmen bergaris untuk hari terlambat (pola diagonal seperti desain). */
-function LateSegment({ height }: { height: number }) {
-  return (
-    <Svg width="100%" height={height}>
-      <Defs>
-        <Pattern id="late" patternUnits="userSpaceOnUse" width={6} height={6} patternTransform="rotate(45)">
-          <Rect width={6} height={6} fill={Colors.warning} />
-          <Line x1={0} y1={0} x2={0} y2={6} stroke={Colors.warningStrong} strokeWidth={6} />
-        </Pattern>
-      </Defs>
-      <Rect width="100%" height={height} fill="url(#late)" />
-    </Svg>
-  );
 }
 
 function Tile({ icon: IconCmp, label, children, divider }: { icon: Icon; label: string; children: ReactNode; divider?: boolean }) {
@@ -111,7 +96,7 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
 
   const segColor = (s: SegStatus) =>
     s === 'ok'
-      ? { backgroundColor: Colors.positive }
+      ? { backgroundColor: STATUS.ok.color }
       : s === 'missed'
         ? { backgroundColor: Colors.surface, borderWidth: 1.5, borderColor: Colors.borderStrong }
         : s === 'today'
@@ -177,7 +162,7 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
               <View
                 key={x.key}
                 style={[styles.seg, { height: segHeight, borderRadius: dense ? 3 : 4 }, x.status !== 'late' && segColor(x.status)]}>
-                {x.status === 'late' && <LateSegment height={segHeight} />}
+                {x.status === 'late' && <LateStripes height={segHeight} />}
               </View>
             ))}
           </View>
@@ -196,14 +181,14 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
           )}
 
           <View style={styles.legend}>
-            <LegendItem swatch={<View style={[styles.swatch, { backgroundColor: Colors.positive }]} />} label="Tepat waktu" value={ok} />
+            <LegendItem swatch={<View style={[styles.swatch, { backgroundColor: STATUS.ok.color }]} />} label={STATUS.ok.label} value={ok} />
             <LegendItem
               swatch={
                 <View style={styles.swatch}>
-                  <LateSegment height={10} />
+                  <LateStripes height={10} />
                 </View>
               }
-              label="Terlambat"
+              label={STATUS.late.label}
               value={late}
             />
             <LegendItem

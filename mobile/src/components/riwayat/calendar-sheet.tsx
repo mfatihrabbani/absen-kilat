@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { StatusMark } from '@/components/attendance/status';
 import { CaretLeftIcon, CaretRightIcon } from '@/components/icons';
-import { StatusMark } from '@/components/riwayat/week-pager';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';

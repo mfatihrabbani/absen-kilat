@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { CheckCircleIcon, ClockCountdownIcon, type Icon } from '@/components/icons';
+import type { Icon } from '@/components/icons';
 import { AppText } from '@/components/ui/text';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 
@@ -22,15 +22,6 @@ export function Chip({ label, tone = 'neutral', icon: IconCmp }: ChipProps) {
         {label}
       </AppText>
     </View>
-  );
-}
-
-/** Chip "Tepat waktu" / "Terlambat" untuk absen masuk. */
-export function StatusChip({ late }: { late: boolean }) {
-  return late ? (
-    <Chip tone="late" icon={ClockCountdownIcon} label="Terlambat" />
-  ) : (
-    <Chip tone="ok" icon={CheckCircleIcon} label="Tepat waktu" />
   );
 }
 

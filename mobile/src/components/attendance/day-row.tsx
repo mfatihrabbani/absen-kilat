@@ -1,9 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { CheckCircleIcon, ClockCountdownIcon } from '@/components/icons';
+import { StatusInline } from '@/components/attendance/status';
 import { ListRow } from '@/components/ui/list';
 import { AppText } from '@/components/ui/text';
-import { Colors, Fonts, Radius, Spacing } from '@/constants/theme';
+import { Colors, Fonts, Radius } from '@/constants/theme';
 import { isLate, lateMinutes, statusLabel, timeOf, workedMinutes } from '@/lib/attendance';
 import { dayShort, formatDuration, formatLongDate, formatTime, fromDateKey } from '@/lib/date';
 import type { DayRecord } from '@/types/attendance';
@@ -46,16 +46,10 @@ export function DayRow({ dateKey, record, onPress }: Props) {
         <AppText numeric numberOfLines={1} style={styles.title}>
           {inTime} – {outTime ?? 'sekarang'}
         </AppText>
-        <View style={styles.sub}>
-          {late ? (
-            <ClockCountdownIcon size={14} weight="fill" color={Colors.warning} />
-          ) : (
-            <CheckCircleIcon size={14} weight="fill" color={Colors.positive} />
-          )}
-          <AppText variant="bodySm" color="textMuted" numberOfLines={1} style={styles.subText}>
-            {late ? `Terlambat ${lateMinutes(record.in)} menit` : 'Tepat waktu'}
-          </AppText>
-        </View>
+        <StatusInline
+          tone={late ? 'late' : 'ok'}
+          label={late ? `Terlambat ${lateMinutes(record.in)} menit` : undefined}
+        />
       </View>
       <AppText color="textMuted" numeric style={styles.dur}>
         {outTime ? formatDuration(worked) : 'Berjalan'}
@@ -92,7 +86,5 @@ const styles = StyleSheet.create({
   },
   main: { flex: 1, minWidth: 0 },
   title: { lineHeight: 22 },
-  sub: { flexDirection: 'row', alignItems: 'center', gap: Spacing.one },
-  subText: { flexShrink: 1 },
   dur: { fontSize: 15 },
 });

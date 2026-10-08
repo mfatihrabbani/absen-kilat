@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { FlatList, Pressable, StyleSheet, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 
+import { StatusMark } from '@/components/attendance/status';
 import { CaretLeftIcon, CaretRightIcon } from '@/components/icons';
 import { Card } from '@/components/ui/card';
 import { AppText } from '@/components/ui/text';
@@ -8,20 +9,6 @@ import { Colors, Radius, Spacing } from '@/constants/theme';
 import { statusLabel, toneOf } from '@/lib/attendance';
 import { addDays, dayShort, formatLongDate, fromDateKey, isWeekend, mondayOf, toDateKey, weekLabel } from '@/lib/date';
 import type { DayRecords } from '@/types/attendance';
-
-/** Titik kecil penanda status: hijau tepat waktu, oranye terlambat. */
-export function StatusMark({ tone, size = 6 }: { tone: 'ok' | 'late' | null; size?: number }) {
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        backgroundColor: tone === 'ok' ? Colors.positive : tone === 'late' ? Colors.warning : 'transparent',
-      }}
-    />
-  );
-}
 
 type Props = {
   /** Senin dari tiap minggu, terlama lebih dulu. */

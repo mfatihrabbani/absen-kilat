@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
+import { StatusChip } from '@/components/attendance/status';
 import { CalendarXIcon, CameraIcon, CaretRightIcon, ClockIcon, CoffeeIcon, SignInIcon, SignOutIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { StatusChip } from '@/components/ui/chip';
 import { EmptyState } from '@/components/ui/empty-state';
 import { ListRow } from '@/components/ui/list';
 import { AppText } from '@/components/ui/text';

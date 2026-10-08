@@ -2,10 +2,10 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { ProgressRing } from '@/components/beranda/progress-ring';
+import { STATUS, StatusIcon } from '@/components/attendance/status';
 import {
   CameraIcon,
   CheckCircleIcon,
-  ClockCountdownIcon,
   MapPinIcon,
   SignInIcon,
   SignOutIcon,
@@ -26,7 +26,7 @@ const SHIFT_LEN = Shift.end - Shift.start;
 /** `5.12` — jam.menit untuk isi cincin. */
 const clockDuration = (mins: number) => `${Math.floor(mins / 60)}.${String(mins % 60).padStart(2, '0')}`;
 
-type Note = { text: string; icon?: Icon; tone?: 'ok' | 'late' };
+type Note = { text: string; tone?: 'ok' | 'late' };
 
 function Metric({
   icon: IconCmp,
@@ -41,8 +41,6 @@ function Metric({
   note: Note;
   divider?: boolean;
 }) {
-  const NoteIcon = note.icon;
-  const noteIconColor = note.tone === 'late' ? Colors.warning : Colors.positive;
   return (
     <View style={[styles.metric, divider && styles.metricDivider]}>
       <View style={styles.metricLabel}>
@@ -55,10 +53,10 @@ function Metric({
         {value ?? '--.--'}
       </AppText>
       <View style={styles.metricLabel}>
-        {NoteIcon && <NoteIcon size={14} weight="fill" color={noteIconColor} />}
+        {note.tone && <StatusIcon tone={note.tone} />}
         <AppText
           variant="caption"
-          color={note.tone === 'late' ? 'warningText' : 'textMuted'}
+          color={note.tone === 'late' ? STATUS.late.textColor : 'textMuted'}
           numberOfLines={1}
           style={styles.shrink}>
           {note.text}
@@ -98,11 +96,11 @@ export function TodayCard({ record, now }: Props) {
 
   const inNote: Note = inAt
     ? late
-      ? { text: 'Terlambat', icon: ClockCountdownIcon, tone: 'late' }
-      : { text: 'Tepat waktu', icon: CheckCircleIcon, tone: 'ok' }
+      ? { text: STATUS.late.label, tone: 'late' }
+      : { text: STATUS.ok.label, tone: 'ok' }
     : { text: 'Batas 08.00' };
   const outNote: Note = outAt
-    ? { text: 'Tercatat', icon: CheckCircleIcon, tone: 'ok' }
+    ? { text: 'Tercatat', tone: 'ok' }
     : inAt
       ? { text: nowMin < Shift.end ? `Sisa ${formatDuration(Shift.end - nowMin)}` : 'Sudah bisa pulang' }
       : { text: 'Jam pulang 17.00' };
