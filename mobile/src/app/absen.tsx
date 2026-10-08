@@ -1,15 +1,22 @@
+import type { CameraType } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Ellipse } from 'react-native-svg';
 
 import { CameraHeader, RoundButton, ShutterButton } from '@/components/absen/camera-chrome';
 import {
+  SelfieCamera,
+  type CapturedPhoto,
+  type SelfieCameraHandle,
+} from '@/components/absen/selfie-camera';
+import {
+  ArrowCounterClockwiseIcon,
   CameraRotateIcon,
   CheckCircleIcon,
+  LightningIcon,
   LightningSlashIcon,
-  UserIcon,
   XIcon,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -28,10 +35,42 @@ export default function AbsenScreen() {
   const today = useTodayAttendance();
   const phase = today?.phase;
 
+  const camera = useRef<SelfieCameraHandle>(null);
+  const [facing, setFacing] = useState<CameraType>('front');
+  const [flash, setFlash] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [capturing, setCapturing] = useState(false);
+  const [photo, setPhoto] = useState<CapturedPhoto | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
+  const back = facing === 'back';
+
+  const capture = async () => {
+    if (capturing || back) return;
+    setCapturing(true);
+    setError(null);
+    const shot = await camera.current?.capture();
+    setCapturing(false);
+    if (shot) setPhoto(shot);
+    else setError('Gagal mengambil foto. Coba lagi.');
+  };
+
+  const retake = () => {
+    setPhoto(null);
+    setError(null);
+  };
+
+  const guide = error
+    ? error
+    : photo
+      ? 'Foto diambil'
+      : back
+        ? 'Absen wajib memakai kamera depan untuk selfie'
+        : 'Posisikan wajah di dalam bingkai';
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top }]} accessibilityLabel="Kamera Absen">
+    <View style={[styles.root, { paddingTop: insets.top }]}>
       <StatusBar style="light" />
       <CameraHeader
         title={phase === 'out' ? 'Absen Keluar' : 'Absen Masuk'}
@@ -43,7 +82,7 @@ export default function AbsenScreen() {
         }
       />
 
-      <View style={styles.finder}>
+      <View style={styles.finder} accessibilityLabel={back ? 'Kamera belakang' : 'Kamera depan'}>
         {!today ? (
           <ActivityIndicator color={CameraColors.ink} />
         ) : phase === 'done' ? (
@@ -61,29 +100,22 @@ export default function AbsenScreen() {
           </View>
         ) : (
           <>
-            <View style={styles.face} importantForAccessibility="no-hide-descendants">
-              <UserIcon
-                size={230}
-                weight="fill"
-                color={CameraColors.silhouette}
-                style={styles.silhouette}
-              />
-              <Svg style={StyleSheet.absoluteFill} viewBox="0 0 230 300">
-                <Ellipse
-                  cx={115}
-                  cy={150}
-                  rx={114}
-                  ry={149}
-                  fill="none"
-                  stroke={CameraColors.inkMuted}
-                  strokeWidth={2}
-                  strokeDasharray="6 5"
-                />
-              </Svg>
-            </View>
-            <AppText variant="bodySm" style={styles.guide}>
-              Posisikan wajah di dalam bingkai
-            </AppText>
+            <SelfieCamera
+              ref={camera}
+              facing={facing}
+              flash={flash}
+              photo={photo}
+              onReadyChange={setReady}
+            />
+            {ready && (
+              <AppText
+                variant="bodySm"
+                style={styles.guide}
+                accessibilityLiveRegion="polite"
+                accessibilityRole={error ? 'alert' : 'text'}>
+                {guide}
+              </AppText>
+            )}
           </>
         )}
       </View>
@@ -92,11 +124,28 @@ export default function AbsenScreen() {
         <View style={{ height: insets.bottom + Spacing.eight }} />
       ) : (
         <View style={[styles.controls, { paddingBottom: insets.bottom + Spacing.eight }]}>
-          <RoundButton label="Lampu kilat layar" onPress={() => {}} disabled>
-            <LightningSlashIcon size={22} color={CameraColors.ink} />
-          </RoundButton>
-          <ShutterButton onPress={() => {}} disabled />
-          <RoundButton label="Ganti ke kamera belakang" onPress={() => {}} disabled>
+          {photo ? (
+            <RoundButton label="Ulangi foto" onPress={retake}>
+              <ArrowCounterClockwiseIcon size={22} color={CameraColors.ink} />
+            </RoundButton>
+          ) : (
+            <RoundButton
+              label="Lampu kilat layar"
+              pressed={flash}
+              disabled={!ready}
+              onPress={() => setFlash((f) => !f)}>
+              {flash ? (
+                <LightningIcon size={22} weight="fill" color={CameraColors.bg} />
+              ) : (
+                <LightningSlashIcon size={22} color={CameraColors.ink} />
+              )}
+            </RoundButton>
+          )}
+          <ShutterButton onPress={capture} disabled={!ready || back || capturing || !!photo} />
+          <RoundButton
+            label={back ? 'Ganti ke kamera depan' : 'Ganti ke kamera belakang'}
+            disabled={!ready || !!photo}
+            onPress={() => setFacing((f) => (f === 'front' ? 'back' : 'front'))}>
             <CameraRotateIcon size={22} color={CameraColors.ink} />
           </RoundButton>
         </View>
@@ -116,13 +165,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  face: { width: 230, height: 300, alignItems: 'center', justifyContent: 'center' },
-  silhouette: { transform: [{ translateY: 28 }] },
   guide: {
-    marginTop: Spacing.four,
-    color: CameraColors.inkSoft,
+    position: 'absolute',
+    bottom: Spacing.six,
+    left: Spacing.six,
+    right: Spacing.six,
     textAlign: 'center',
-    paddingHorizontal: Spacing.six,
+    color: CameraColors.ink,
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowRadius: 6,
   },
   complete: { alignItems: 'center', gap: Spacing.three, paddingHorizontal: Spacing.six },
   completeIcon: {
