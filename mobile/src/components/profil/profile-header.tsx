@@ -1,11 +1,10 @@
-import { Image } from 'expo-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { CameraIcon, SealCheckIcon } from '@/components/icons';
 import { Chip } from '@/components/ui/chip';
 import { AppText } from '@/components/ui/text';
+import { UserAvatar } from '@/components/user-avatar';
 import { Colors, Fonts, Spacing } from '@/constants/theme';
-import { initialsOf } from '@/hooks/use-current-user';
 import type { Profile } from '@/types/profile';
 
 /** Identitas di atas profil: avatar 96px dengan tombol kamera, nama editorial, email & status verifikasi. */
@@ -19,15 +18,7 @@ export function ProfileHeader({
   return (
     <View style={styles.head}>
       <View style={styles.avatarWrap}>
-        <View style={styles.avatar} importantForAccessibility="no-hide-descendants">
-          {profile.image ? (
-            <Image source={profile.image} style={StyleSheet.absoluteFill} contentFit="cover" />
-          ) : (
-            <AppText numeric style={styles.initials}>
-              {initialsOf(profile.name)}
-            </AppText>
-          )}
-        </View>
+        <UserAvatar name={profile.name} image={profile.image} size={96} />
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Ubah foto profil"
@@ -53,18 +44,6 @@ export function ProfileHeader({
 const styles = StyleSheet.create({
   head: { alignItems: 'center', gap: Spacing.two, paddingTop: Spacing.two },
   avatarWrap: { marginBottom: Spacing.two },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    overflow: 'hidden',
-    backgroundColor: Colors.surfaceMuted,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  initials: { fontFamily: Fonts.editorial, fontSize: 36, lineHeight: 42, letterSpacing: -1 },
   avatarBtn: {
     position: 'absolute',
     right: -2,

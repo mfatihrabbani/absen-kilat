@@ -1,12 +1,10 @@
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { StyleSheet } from 'react-native';
 
+import { UserAvatar } from '@/components/user-avatar';
 import { IconButton } from '@/components/ui/icon-button';
-import { AppText } from '@/components/ui/text';
-import { initialsOf, useCurrentUser } from '@/hooks/use-current-user';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
-/** Avatar bulat di kanan atas — inisial atau foto profil — membuka Profil Saya. */
+/** Avatar bulat di kanan atas — foto profil atau inisial — membuka Profil Saya. */
 export function AvatarButton() {
   const router = useRouter();
   const user = useCurrentUser();
@@ -14,11 +12,7 @@ export function AvatarButton() {
     <IconButton
       accessibilityLabel={`Buka Profil Saya, ${user.name}`}
       onPress={() => router.push('/profil')}>
-      {user.image ? (
-        <Image source={user.image} style={StyleSheet.absoluteFill} contentFit="cover" />
-      ) : (
-        <AppText variant="label">{initialsOf(user.name)}</AppText>
-      )}
+      <UserAvatar name={user.name} image={user.image} size={36} variant="compact" />
     </IconButton>
   );
 }
