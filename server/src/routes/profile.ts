@@ -10,6 +10,7 @@ import { db } from '../db';
 import { users } from '../db/schema';
 import { HttpError } from '../lib/http-error';
 import { notificationPrefsSchema, parsePrefs, toProfileDto } from '../lib/profile';
+import { photoUpload, removePhoto, savePhoto } from '../lib/uploads';
 import { requireUser, userIdOf } from '../middleware/current-user';
 
 export const profileRouter = Router();
@@ -84,4 +85,35 @@ profileRouter.put('/password', async (req, res) => {
     }
     throw e;
   }
+});
+
+/** Simpan path foto profil baru (atau `null`) dan hapus file lama dari disk. */
+async function replacePhoto(userId: string, photoPath: string | null) {
+  const user = await db.query.users.findFirst({ where: eq(users.id, userId) });
+  if (!user) throw new HttpError(404, 'Akun tidak ditemukan');
+  const [updated] = await db
+    .update(users)
+    .set({ image: photoPath, updatedAt: new Date() })
+    .where(eq(users.id, userId))
+    .returning();
+  if (user.image && user.image !== photoPath) await removePhoto(user.image);
+  return updated ?? user;
+}
+
+/** `POST /api/profile/photo` (multipart `photo`, gambar maks. 8 MB) → `{ data: Profile }`. */
+profileRouter.post('/photo', photoUpload.single('photo'), async (req, res) => {
+  if (!req.file) throw new HttpError(400, 'Pilih foto terlebih dahulu');
+  const userId = userIdOf(req);
+  const photoPath = await savePhoto(`avatars/${userId}`, req.file);
+  try {
+    res.status(201).json({ data: toProfileDto(req, await replacePhoto(userId, photoPath)) });
+  } catch (e) {
+    await removePhoto(photoPath);
+    throw e;
+  }
+});
+
+/** `DELETE /api/profile/photo` → `{ data: Profile }`; kembali ke avatar inisial. */
+profileRouter.delete('/photo', async (req, res) => {
+  res.json({ data: toProfileDto(req, await replacePhoto(userIdOf(req), null)) });
 });

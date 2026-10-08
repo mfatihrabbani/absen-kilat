@@ -87,6 +87,8 @@ Semua tanggal memakai zona waktu kantor (WIB). Error dikirim sebagai `{ "error":
 | `GET /api/profile` | Profil: `id`, `name`, `email`, `emailVerified`, `image`, `notificationPrefs` |
 | `PUT /api/profile/notifications` | Simpan preferensi `{ reminderIn?, reminderOut?, weekly? }` (boolean) |
 | `PUT /api/profile/password` | Ganti kata sandi `{ currentPassword, newPassword }`; sesi perangkat lain dikeluarkan |
+| `POST /api/profile/photo` | Unggah foto profil (multipart `photo`, gambar maks. 8 MB); foto lama dihapus |
+| `DELETE /api/profile/photo` | Hapus foto profil (kembali ke avatar inisial) |
 | `GET /api/attendance/today` | Status absen hari ini: `in`, `out`, `next` (`in`/`out`/`done`), jam kerja, waktu server |
 | `GET /api/attendance/:id` | Detail satu absen |
 | `POST /api/attendance` | Catat absen (multipart: `photo`, `type` = `in`/`out`, `latitude`, `longitude`, `accuracy`). Waktu & status (`on_time`/`late`, batas 08.00) ditentukan server. Satu absen masuk & satu absen keluar per hari; keluar hanya setelah masuk (409 bila melanggar). |
