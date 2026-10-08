@@ -117,3 +117,16 @@ profileRouter.post('/photo', photoUpload.single('photo'), async (req, res) => {
 profileRouter.delete('/photo', async (req, res) => {
   res.json({ data: toProfileDto(req, await replacePhoto(userIdOf(req), null)) });
 });
+
+/**
+ * `POST /api/profile/logout` `{ allDevices?: boolean }` → `{ data: { ok: true } }`.
+ * Mencabut sesi perangkat ini (atau semua sesi) dan menghapus cookie sesi.
+ */
+profileRouter.post('/logout', async (req, res) => {
+  const headers = fromNodeHeaders(req.headers);
+  if (req.body?.allDevices === true) await auth.api.revokeSessions({ headers });
+  const result = await auth.api.signOut({ headers, returnHeaders: true });
+  const cookies = result.headers.getSetCookie();
+  if (cookies.length) res.setHeader('Set-Cookie', cookies);
+  res.json({ data: { ok: true } });
+});
