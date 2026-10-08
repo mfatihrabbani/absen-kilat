@@ -28,6 +28,40 @@ export const attendanceRouter = Router();
 attendanceRouter.use(requireUser);
 
 /**
+ * `GET /api/attendance/today` → status absen hari ini (WIB):
+ * `{ data: { date, in, out, next: 'in' | 'out' | 'done', shift: { start, end }, serverTime } }`.
+ */
+attendanceRouter.get('/today', async (req, res) => {
+  const now = new Date();
+  const date = officeDateKey(now);
+  const { start, end } = officeDayRange(date);
+  const rows = await db
+    .select()
+    .from(attendances)
+    .where(
+      and(
+        eq(attendances.userId, userIdOf(req)),
+        gte(attendances.timestamp, start),
+        lt(attendances.timestamp, end),
+      ),
+    )
+    .orderBy(asc(attendances.timestamp));
+
+  const checkIn = rows.find((r) => r.type === 'in') ?? null;
+  const checkOut = rows.findLast((r) => r.type === 'out') ?? null;
+  res.json({
+    data: {
+      date,
+      in: checkIn && toAttendanceDto(req, checkIn),
+      out: checkOut && toAttendanceDto(req, checkOut),
+      next: !checkIn ? 'in' : !checkOut ? 'out' : 'done',
+      shift: { start: '08:00', end: '17:00' },
+      serverTime: now.toISOString(),
+    },
+  });
+});
+
+/**
  * `GET /api/attendance?date=YYYY-MM-DD` atau `?from=YYYY-MM-DD&to=YYYY-MM-DD`
  * → `{ data: Attendance[] }` milik pengguna, urut kronologis (tanggal dalam WIB).
  */
