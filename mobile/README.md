@@ -1,56 +1,42 @@
-# Welcome to your Expo app 👋
+# Absen Kilat — Aplikasi Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplikasi absensi pribadi (Expo + React Native, Expo Router): absen masuk/keluar dengan selfie dan
+lokasi GPS, riwayat dengan filter tanggal, autentikasi, dan profil. Tampilan mengikuti desain
+"Sunlit Ledger" dari DesainPakeAI.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Menjalankan
 
 ```bash
-npm run reset-project
+cd mobile
+npm install
+npx expo start          # buka di Expo Go / emulator, atau tekan `w` untuk web
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Pemeriksaan sebelum commit:
 
-### Other setup steps
+```bash
+npx tsc --noEmit
+npx expo lint
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+> Kamera (`expo-camera`), lokasi (`expo-location`), pemilih gambar, dan pengingat
+> (`expo-notifications`) butuh perangkat/emulator; di web sebagian fitur terbatas.
 
-## Learn more
+## Data
 
-To learn more about developing your project with Expo, look at the following resources:
+Saat ini layanan di `src/services/*` masih memakai **data tiruan** (`src/mocks`), dengan kontrak
+yang sama dengan API server di `../server` (lihat `server/README.md`). Akun tiruan:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Masuk dengan email apa pun + kata sandi ≥ 8 karakter; `salah12345` menampilkan pesan gagal.
+- Email berawalan `belum…` dianggap belum terverifikasi; kode `000000` ditolak.
+- Daftar dengan `dipakai@contoh.com` menampilkan "email sudah terdaftar".
 
-## Join the community
+## Struktur
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+| Folder | Isi |
+| --- | --- |
+| `src/app` | Layar (Expo Router): `(tabs)` Beranda & Riwayat, `(auth)` masuk/daftar/verifikasi/sandi, `absen`, `detail/[id]`, `profil`, `ganti-sandi` |
+| `src/components` | Komponen UI (`ui/`), form, dan komponen per layar |
+| `src/services` | Akses data (absen, autentikasi, profil) |
+| `src/hooks`, `src/lib` | Hook data/sesi dan utilitas (tanggal, status absen, pengingat, banner) |
+| `src/constants/theme.ts` | Token desain (warna, font Inter/IBM Plex Serif, jarak, radius) |

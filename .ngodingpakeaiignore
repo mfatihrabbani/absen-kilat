@@ -6,3 +6,12 @@
 # docs/internal/
 # *.snap
 # fixtures/
+
+# Cache, lockfile, dan konfigurasi alat (bukan kode aplikasi)
+**/.expo/
+**/package-lock.json
+.claude/
+.codex/
+mobile/.claude/
+mobile/.vscode/
+server/drizzle/meta/
