@@ -8,7 +8,7 @@ import { db } from './db';
 import { accounts, sessions, users, verifications } from './db/schema';
 import { env } from './env';
 import { resetPasswordEmail, verificationEmail } from './lib/email-templates';
-import { sendMail } from './lib/mailer';
+import { queueMail } from './lib/mailer';
 
 /** Kata sandi baru harus mengandung huruf dan angka (sama dengan aturan di aplikasi). */
 const passwordRule = createAuthMiddleware(async (ctx) => {
@@ -51,7 +51,7 @@ export const auth = betterAuth({
     resetPasswordTokenExpiresIn: 30 * 60,
     revokeSessionsOnPasswordReset: true,
     async sendResetPassword({ user, url }) {
-      await sendMail(resetPasswordEmail({ to: user.email, url }));
+      queueMail(resetPasswordEmail({ to: user.email, url }));
     },
   },
   emailVerification: {
@@ -97,7 +97,7 @@ export const auth = betterAuth({
         const link = new URL('/api/verify-email-link', env.authUrl);
         link.searchParams.set('email', email);
         link.searchParams.set('otp', otp);
-        await sendMail(verificationEmail({ to: email, otp, link: link.toString() }));
+        queueMail(verificationEmail({ to: email, otp, link: link.toString() }));
       },
     }),
   ],
