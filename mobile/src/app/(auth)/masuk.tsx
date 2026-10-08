@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { PushedScreen } from '@/components/ui/pushed-screen';
 import { AppText } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
+import { getSession } from '@/lib/session';
 import { isValidEmail } from '@/lib/validation';
 import { AuthError, signIn } from '@/services/auth';
 
@@ -42,7 +43,9 @@ export default function MasukScreen() {
     try {
       await signIn({ email: email.trim(), password });
       setPassword('');
-      router.replace('/');
+      // Email belum diverifikasi → minta kode verifikasi dulu.
+      const user = getSession().user;
+      router.replace(user && !user.emailVerified ? '/verifikasi' : '/');
     } catch (e) {
       if (e instanceof AuthError && e.field) setErrors({ [e.field]: e.message });
       else setAlert(e instanceof Error ? e.message : 'Gagal masuk. Coba lagi.');

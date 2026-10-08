@@ -37,7 +37,8 @@ export default function RootLayout() {
   });
   const session = useSession();
   const ready = (fontsLoaded || !!fontError) && session.status !== 'loading';
-  const signedIn = session.status === 'signed-in';
+  // Aplikasi hanya terbuka untuk sesi dengan email terverifikasi.
+  const canUseApp = session.status === 'signed-in' && session.user.emailVerified;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
@@ -51,8 +52,8 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <Stack
           screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.canvas } }}>
-          {/* Layar aplikasi hanya untuk pengguna yang sudah masuk. */}
-          <Stack.Protected guard={signedIn}>
+          {/* Layar aplikasi: wajib masuk dan email sudah diverifikasi. */}
+          <Stack.Protected guard={canUseApp}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="detail/[id]" />
             <Stack.Screen

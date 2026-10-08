@@ -61,6 +61,12 @@ export async function signIn(input: SignInInput): Promise<void> {
     throw new AuthError('Email atau kata sandi salah. Periksa lagi lalu coba masuk.');
   }
   const email = input.email.trim();
+  // Data tiruan: email berawalan "belum" dianggap belum diverifikasi.
+  if (email.toLowerCase().startsWith('belum')) {
+    pendingEmail = email;
+    setSessionUser({ ...MOCK_USER, id: `mock-${email}`, email, name: nameFromEmail(email), emailVerified: false });
+    return;
+  }
   setSessionUser(
     email.toLowerCase() === MOCK_USER.email
       ? MOCK_USER

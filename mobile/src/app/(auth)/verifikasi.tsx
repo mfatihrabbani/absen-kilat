@@ -13,6 +13,7 @@ import { AppText } from '@/components/ui/text';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { useCountdown } from '@/hooks/use-countdown';
 import { setFlash } from '@/lib/flash';
+import { useSession } from '@/lib/session';
 import { getPendingEmail, resendVerification, verifyEmail } from '@/services/auth';
 
 const CODE_LENGTH = 6;
@@ -20,7 +21,8 @@ const CODE_LENGTH = 6;
 /** Verifikasi email dengan kode 6 digit setelah daftar; aktifkan akun lalu masuk ke beranda. */
 export default function VerifikasiScreen() {
   const router = useRouter();
-  const email = getPendingEmail() ?? '';
+  const session = useSession();
+  const email = getPendingEmail() ?? session.user?.email ?? '';
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
