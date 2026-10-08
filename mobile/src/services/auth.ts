@@ -29,3 +29,13 @@ export async function signUp(input: SignUpInput): Promise<void> {
   }
   pendingEmail = input.email.trim();
 }
+
+export type SignInInput = { email: string; password: string };
+
+/** Masuk dengan email & kata sandi. Galat tanpa `field` ditampilkan sebagai peringatan umum. */
+export async function signIn(input: SignInInput): Promise<void> {
+  await delay(900);
+  if (input.password === 'salah12345') {
+    throw new AuthError('Email atau kata sandi salah. Periksa lagi lalu coba masuk.');
+  }
+}

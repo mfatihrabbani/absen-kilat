@@ -22,7 +22,7 @@ export function AuthIntro({
         {title}
       </AppText>
       {lead ? (
-        <AppText color="textMuted" style={top ? undefined : styles.lead}>
+        <AppText color="textMuted" style={top ? styles.leadAfterTop : styles.lead}>
           {lead}
         </AppText>
       ) : null}
@@ -32,6 +32,7 @@ export function AuthIntro({
 
 const styles = StyleSheet.create({
   intro: {},
-  withTop: { gap: Spacing.two },
+  withTop: { gap: Spacing.four },
   lead: { marginTop: Spacing.two },
+  leadAfterTop: { marginTop: -Spacing.two },
 });
