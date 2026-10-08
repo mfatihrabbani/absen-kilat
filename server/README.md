@@ -45,3 +45,4 @@ Semua tanggal memakai zona waktu kantor (WIB). Error dikirim sebagai `{ "error":
 | `GET /api/attendance?date=YYYY-MM-DD` | Absen pada satu tanggal |
 | `GET /api/attendance?from=YYYY-MM-DD&to=YYYY-MM-DD` | Absen pada rentang tanggal (maks. 366 hari) |
 | `GET /api/attendance/:id` | Detail satu absen |
+| `POST /api/attendance` | Catat absen (multipart: `photo`, `type` = `in`/`out`, `latitude`, `longitude`, `accuracy`). Waktu & status (`on_time`/`late`, batas 08.00) ditentukan server. Satu absen masuk & satu absen keluar per hari; keluar hanya setelah masuk (409 bila melanggar). |

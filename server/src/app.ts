@@ -1,4 +1,5 @@
 import express, { type ErrorRequestHandler, type RequestHandler } from 'express';
+import multer from 'multer';
 
 import { env } from './env';
 import { HttpError } from './lib/http-error';
@@ -22,6 +23,12 @@ const cors: RequestHandler = (req, res, next) => {
 };
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  if (err instanceof multer.MulterError) {
+    const message =
+      err.code === 'LIMIT_FILE_SIZE' ? 'Ukuran foto maksimal 8 MB' : 'Unggahan foto tidak valid';
+    res.status(err.code === 'LIMIT_FILE_SIZE' ? 413 : 400).json({ error: { message } });
+    return;
+  }
   const status = err instanceof HttpError ? err.status : (err?.status ?? 500);
   if (status >= 500) console.error(err);
   res.status(status).json({
