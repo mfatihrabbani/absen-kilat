@@ -10,7 +10,7 @@ export function useCurrentUser(): CurrentUser {
   return useSession().user ?? GUEST;
 }
 
-/** `Rina Kartika` → `RK` */
+/** `Budi Santoso` → `BS` */
 export function initialsOf(name: string): string {
   return name
     .split(' ')

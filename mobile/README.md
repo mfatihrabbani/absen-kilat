@@ -27,7 +27,8 @@ npx expo lint
 Saat ini layanan di `src/services/*` masih memakai **data tiruan** (`src/mocks`), dengan kontrak
 yang sama dengan API server di `../server` (lihat `server/README.md`). Akun tiruan:
 
-- Masuk dengan email apa pun + kata sandi ≥ 8 karakter; `salah12345` menampilkan pesan gagal.
+- Masuk dengan email apa pun + kata sandi ≥ 8 karakter (mis. `budi.santoso@contoh.id` / `rahasia123`);
+  `salah12345` menampilkan pesan gagal. Foto selfie tiruan berupa ilustrasi kartun, bukan foto orang.
 - Email berawalan `belum…` dianggap belum terverifikasi; kode `000000` ditolak.
 - Daftar dengan `dipakai@contoh.com` menampilkan "email sudah terdaftar".
 

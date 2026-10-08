@@ -15,10 +15,17 @@ export const DEMO_PASSWORD = 'rahasia123';
 /** Pengguna contoh untuk pengembangan lokal. */
 export const DEMO_USER = {
   id: DEMO_USER_ID,
-  name: 'Rina Kartika',
-  email: 'rina.kartika@contoh.id',
+  name: 'Budi Santoso',
+  email: 'budi.santoso@contoh.id',
   emailVerified: true,
 };
+
+/**
+ * Foto selfie contoh: ilustrasi kartun laki-laki (DiceBear avataaars), bukan foto orang sungguhan.
+ * Dipakai untuk semua catatan contoh agar wajahnya konsisten.
+ */
+const DEMO_SELFIE_URL =
+  'https://api.dicebear.com/9.x/avataaars/png?seed=budi-santoso&size=600&top=shortFlat&facialHair=beardLight&facialHairProbability=100&accessoriesProbability=0&clothing=collarAndSweater&clothesColor=262e33&eyes=default&eyebrows=defaultNatural&mouth=smile&skinColor=d08b5b&hairColor=2c1b18&facialHairColor=2c1b18&backgroundColor=f3ebe4';
 
 /** Jam masuk/keluar 20 hari kerja terakhir (sama dengan data tiruan aplikasi; `null` = tidak hadir). */
 const FIXTURE_TIMES: ([string, string] | null)[] = [
@@ -73,7 +80,7 @@ if (existing > 0) {
       rows.push({
         userId: DEMO_USER.id,
         type,
-        photoPath: `https://i.pravatar.cc/600?img=${(seed % 12) + 32}`,
+        photoPath: DEMO_SELFIE_URL,
         latitude: -6.20088 + seed * 0.00001,
         longitude: 106.84557 - seed * 0.00002,
         accuracy: 5 + (seed % 8),

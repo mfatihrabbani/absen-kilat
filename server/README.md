@@ -14,7 +14,8 @@ npm run dev               # http://localhost:3000 (auto-reload)
 
 Cek: `curl http://localhost:3000/api/health` → `{"ok":true}`.
 
-Akun contoh dari `db:seed`: **rina.kartika@contoh.id** / **rahasia123**.
+Akun contoh dari `db:seed`: **budi.santoso@contoh.id** / **rahasia123**. Foto selfie contoh
+berupa ilustrasi kartun (DiceBear), bukan foto orang sungguhan.
 
 ## Skrip
 

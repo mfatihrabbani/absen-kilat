@@ -10,8 +10,8 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /** Akun contoh untuk data tiruan. */
 const MOCK_USER: SessionUser = {
   id: 'demo-user',
-  name: 'Rina Kartika',
-  email: 'rina.kartika@contoh.id',
+  name: 'Budi Santoso',
+  email: 'budi.santoso@contoh.id',
   emailVerified: true,
   image: null,
 };

@@ -31,6 +31,13 @@ const FIXTURE_TIMES: ([string, string] | null)[] = [
   ['07.46', '17.13'],
 ];
 
+/**
+ * Foto selfie tiruan: ilustrasi kartun laki-laki (DiceBear avataaars), bukan foto orang sungguhan.
+ * Satu wajah yang sama untuk semua catatan, seperti selfie milik satu pengguna.
+ */
+const DEMO_SELFIE_URL =
+  'https://api.dicebear.com/9.x/avataaars/png?seed=budi-santoso&size=600&top=shortFlat&facialHair=beardLight&facialHairProbability=100&accessoriesProbability=0&clothing=collarAndSweater&clothesColor=262e33&eyes=default&eyebrows=defaultNatural&mouth=smile&skinColor=d08b5b&hairColor=2c1b18&facialHairColor=2c1b18&backgroundColor=f3ebe4';
+
 const BASE_LAT = -6.20088;
 const BASE_LNG = 106.84557;
 
@@ -49,7 +56,7 @@ function makeEntry(day: Date, type: AttendanceType, time: string): Attendance {
   return {
     id,
     type,
-    photoUrl: `https://i.pravatar.cc/600?img=${(seed % 12) + 32}`,
+    photoUrl: DEMO_SELFIE_URL,
     latitude: BASE_LAT + seed * 0.00001,
     longitude: BASE_LNG - seed * 0.00002,
     accuracy: 5 + (seed % 8),
