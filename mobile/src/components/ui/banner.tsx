@@ -4,10 +4,11 @@ import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { CheckCircleIcon } from '@/components/icons';
+import { CheckCircleIcon, WarningCircleIcon } from '@/components/icons';
 import { AppText } from '@/components/ui/text';
 import { Colors, Radius, Shadow, Spacing } from '@/constants/theme';
 import { consumeFlash, onFlash, type FlashMessage } from '@/lib/flash';
+import { hapticError } from '@/lib/haptics';
 
 const VISIBLE_MS = 3500;
 
@@ -26,6 +27,7 @@ export function FlashBanner() {
     const m = consumeFlash();
     if (!m) return;
     setMessage(m);
+    if (m.tone === 'error') hapticError();
     AccessibilityInfo.announceForAccessibility(`${m.title}. ${m.body ?? ''}`);
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setMessage(null), VISIBLE_MS);
@@ -40,17 +42,18 @@ export function FlashBanner() {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   if (!message) return null;
-  const IconCmp = message.icon ?? CheckCircleIcon;
+  const isError = message.tone === 'error';
+  const IconCmp = message.icon ?? (isError ? WarningCircleIcon : CheckCircleIcon);
 
   return (
     <Animated.View
       entering={SlideInUp.duration(300)}
       exiting={SlideOutUp.duration(220)}
       accessibilityRole="alert"
-      accessibilityLiveRegion="polite"
+      accessibilityLiveRegion={isError ? 'assertive' : 'polite'}
       style={[styles.banner, { top: insets.top + 4 }]}>
       <View style={styles.icon}>
-        <IconCmp size={20} weight="fill" color={Colors.accent} />
+        <IconCmp size={20} weight="fill" color={isError ? Colors.danger : Colors.accent} />
       </View>
       <View style={styles.body}>
         <AppText variant="bodySm" weight="semibold" color="onPrimary">

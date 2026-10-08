@@ -93,7 +93,7 @@ export default function ProfilScreen() {
       showFlash({
         title: 'Gagal menyimpan foto',
         body: e instanceof Error ? e.message : 'Coba lagi.',
-        icon: WarningCircleIcon,
+        tone: 'error',
       });
     } finally {
       setSavingPhoto(false);
@@ -120,7 +120,7 @@ export default function ProfilScreen() {
       showFlash({
         title: 'Gagal menyimpan pengaturan',
         body: e instanceof Error ? e.message : 'Coba lagi.',
-        icon: WarningCircleIcon,
+        tone: 'error',
       });
     }
   };
@@ -137,7 +137,7 @@ export default function ProfilScreen() {
       showFlash({
         title: 'Gagal keluar',
         body: e instanceof Error ? e.message : 'Coba lagi.',
-        icon: WarningCircleIcon,
+        tone: 'error',
       });
     }
   };

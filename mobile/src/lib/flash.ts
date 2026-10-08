@@ -5,7 +5,13 @@ import type { Icon } from '@/components/icons';
  * - `setFlash`: tampil di layar berikutnya yang mendapat fokus (mis. sesudah absen lalu kembali).
  * - `showFlash`: tampil seketika di layar yang sedang aktif.
  */
-export type FlashMessage = { title: string; body?: string; icon?: Icon };
+export type FlashMessage = {
+  title: string;
+  body?: string;
+  icon?: Icon;
+  /** `error` untuk kegagalan: ikon merah dan diumumkan segera ke pembaca layar. */
+  tone?: 'success' | 'error';
+};
 
 let pending: FlashMessage | null = null;
 const listeners = new Set<() => void>();
