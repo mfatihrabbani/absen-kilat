@@ -39,3 +39,25 @@ export async function signIn(input: SignInInput): Promise<void> {
     throw new AuthError('Email atau kata sandi salah. Periksa lagi lalu coba masuk.');
   }
 }
+
+/** Email terakhir yang meminta reset kata sandi (ditampilkan di layar atur sandi). */
+let resetEmail: string | null = null;
+export const getResetEmail = () => resetEmail;
+
+/**
+ * Kirim tautan reset kata sandi ke email. Tautan membuka aplikasi di
+ * `absenkilat://atur-sandi?token=...`. Selalu berhasil agar tidak membocorkan
+ * apakah email terdaftar.
+ */
+export async function requestPasswordReset(email: string): Promise<void> {
+  await delay(900);
+  resetEmail = email.trim();
+}
+
+/** Simpan kata sandi baru memakai token dari tautan email. */
+export async function resetPassword(input: { token: string; newPassword: string }): Promise<void> {
+  await delay(900);
+  if (input.token === 'kedaluwarsa') {
+    throw new AuthError('Tautan reset tidak valid atau sudah kedaluwarsa. Minta tautan baru.');
+  }
+}
