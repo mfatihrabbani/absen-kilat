@@ -61,3 +61,20 @@ export async function resetPassword(input: { token: string; newPassword: string 
     throw new AuthError('Tautan reset tidak valid atau sudah kedaluwarsa. Minta tautan baru.');
   }
 }
+
+/** Verifikasi email dengan kode 6 digit yang dikirim setelah daftar. */
+export async function verifyEmail(input: { email: string; code: string }): Promise<void> {
+  await delay(900);
+  if (input.code === '000000') {
+    throw new AuthError(
+      'Kode salah atau sudah kedaluwarsa. Coba lagi atau kirim ulang kode.',
+      'code',
+    );
+  }
+}
+
+/** Kirim ulang kode verifikasi email. */
+export async function resendVerification(email: string): Promise<void> {
+  await delay(600);
+  pendingEmail = email;
+}
