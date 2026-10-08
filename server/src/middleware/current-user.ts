@@ -1,6 +1,8 @@
+import { fromNodeHeaders } from 'better-auth/node';
 import type { NextFunction, Request, Response } from 'express';
 
-import { DEMO_USER_ID } from '../lib/demo-user';
+import { auth } from '../auth';
+import { HttpError } from '../lib/http-error';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -9,12 +11,11 @@ declare module 'express-serve-static-core' {
   }
 }
 
-/**
- * Tentukan pengguna untuk request. Sementara (sebelum Better Auth aktif)
- * semua request memakai pengguna contoh hasil seed.
- */
-export function requireUser(req: Request, _res: Response, next: NextFunction) {
-  req.userId = DEMO_USER_ID;
+/** Wajibkan sesi Better Auth yang valid; isi `req.userId`, atau balas 401. */
+export async function requireUser(req: Request, _res: Response, next: NextFunction) {
+  const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+  if (!session) throw new HttpError(401, 'Silakan masuk terlebih dahulu');
+  req.userId = session.user.id;
   next();
 }
 

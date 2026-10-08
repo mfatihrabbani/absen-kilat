@@ -1,11 +1,18 @@
-import { eq } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
+
+import { and, eq } from 'drizzle-orm';
+
+import { auth } from '../auth';
 
 import { DEMO_USER_ID } from '../lib/demo-user';
 import { officeDateKey, officeDayRange, statusFor } from '../lib/attendance-rules';
 import { client, db } from './index';
-import { attendances, users } from './schema';
+import { accounts, attendances, users } from './schema';
 
-/** Pengguna contoh untuk pengembangan lokal (sebelum autentikasi aktif). */
+/** Kata sandi akun contoh — hanya untuk pengembangan lokal. */
+export const DEMO_PASSWORD = 'rahasia123';
+
+/** Pengguna contoh untuk pengembangan lokal. */
 export const DEMO_USER = {
   id: DEMO_USER_ID,
   name: 'Rina Kartika',
@@ -29,6 +36,22 @@ function at(dateKey: string, time: string, seconds: number): Date {
 }
 
 await db.insert(users).values(DEMO_USER).onConflictDoNothing();
+
+// Pastikan akun contoh bisa login dengan email & kata sandi (akun `credential` Better Auth).
+const credential = await db.query.accounts.findFirst({
+  where: and(eq(accounts.userId, DEMO_USER.id), eq(accounts.providerId, 'credential')),
+});
+if (!credential) {
+  const ctx = await auth.$context;
+  await db.insert(accounts).values({
+    id: randomUUID(),
+    accountId: DEMO_USER.id,
+    providerId: 'credential',
+    userId: DEMO_USER.id,
+    password: await ctx.password.hash(DEMO_PASSWORD),
+  });
+  console.log(`Akun contoh: ${DEMO_USER.email} / ${DEMO_PASSWORD}`);
+}
 
 const existing = await db.$count(attendances, eq(attendances.userId, DEMO_USER.id));
 if (existing > 0) {

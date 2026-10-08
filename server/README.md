@@ -14,6 +14,8 @@ npm run dev               # http://localhost:3000 (auto-reload)
 
 Cek: `curl http://localhost:3000/api/health` → `{"ok":true}`.
 
+Akun contoh dari `db:seed`: **rina.kartika@contoh.id** / **rahasia123**.
+
 ## Skrip
 
 | Perintah | Fungsi |
@@ -34,6 +36,16 @@ Cek: `curl http://localhost:3000/api/health` → `{"ok":true}`.
 | `PORT` | `3000` | Port HTTP |
 | `DATABASE_URL` | `file:./data/absen-kilat.db` | Lokasi database SQLite |
 | `UPLOAD_DIR` | `./uploads` | Folder foto absen |
+| `BETTER_AUTH_URL` | `http://localhost:PORT` | URL publik server untuk Better Auth |
+| `BETTER_AUTH_SECRET` | secret pengembangan | **Wajib** diisi di produksi |
+| `TRUSTED_ORIGINS` | `absenkilat://,exp://,http://localhost:8081` | Asal yang dipercaya untuk request auth |
+
+## Autentikasi
+
+Memakai [Better Auth](https://better-auth.com) (email & kata sandi) di `/api/auth/*`,
+mis. `POST /api/auth/sign-up/email`, `POST /api/auth/sign-in/email`, `POST /api/auth/sign-out`,
+`GET /api/auth/get-session`. Aplikasi mobile memakai `@better-auth/expo` sehingga cookie sesi
+disimpan di secure storage. Semua endpoint `/api/attendance` wajib login (401 bila tidak).
 
 ## API
 

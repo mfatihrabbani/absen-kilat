@@ -1,6 +1,8 @@
+import { toNodeHandler } from 'better-auth/node';
 import express, { type ErrorRequestHandler, type RequestHandler } from 'express';
 import multer from 'multer';
 
+import { auth } from './auth';
 import { env } from './env';
 import { HttpError } from './lib/http-error';
 import { attendanceRouter } from './routes/attendance';
@@ -45,6 +47,9 @@ export function createApp() {
   app.get('/api/health', (_req, res) => {
     res.json({ ok: true });
   });
+
+  // Better Auth membaca body sendiri, jadi dipasang sebelum `express.json()`.
+  app.all('/api/auth/*splat', toNodeHandler(auth));
 
   app.use(express.json());
   app.use('/uploads', express.static(env.uploadDir, { maxAge: '7d', fallthrough: false }));
