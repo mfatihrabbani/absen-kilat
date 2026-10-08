@@ -60,6 +60,9 @@ export default function ProfilScreen() {
   const changePhoto = async (source: 'camera' | 'gallery' | 'remove') => {
     const picked = source === 'remove' ? null : await pickProfileImage(source);
     if (source !== 'remove' && !picked) return;
+    const previous = profile.image;
+    // Tampilkan foto baru (atau inisial) seketika; kembalikan bila gagal disimpan.
+    setProfile((p) => (p ? { ...p, image: picked?.uri ?? null } : p));
     setSavingPhoto(true);
     try {
       const image = await updateProfilePhoto(picked);
@@ -70,9 +73,14 @@ export default function ProfilScreen() {
               title: 'Foto profil diperbarui',
               body: source === 'camera' ? 'Foto dari kamera disimpan.' : 'Foto dari galeri disimpan.',
             }
-          : { title: 'Foto profil dihapus', body: 'Inisial namamu dipakai sebagai avatar.', icon: InfoIcon },
+          : {
+              title: 'Foto profil dihapus',
+              body: 'Inisial namamu dipakai sebagai avatar.',
+              icon: InfoIcon,
+            },
       );
     } catch (e) {
+      setProfile((p) => (p ? { ...p, image: previous } : p));
       setFlash({
         title: 'Gagal menyimpan foto',
         body: e instanceof Error ? e.message : 'Coba lagi.',
