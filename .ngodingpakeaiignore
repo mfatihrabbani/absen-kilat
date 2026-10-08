@@ -15,3 +15,4 @@
 mobile/.claude/
 mobile/.vscode/
 server/drizzle/meta/
+**/expo-env.d.ts
