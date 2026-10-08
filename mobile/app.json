@@ -40,6 +40,12 @@
           "microphonePermission": false,
           "recordAudioAndroid": false
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Absen Kilat memerlukan lokasi untuk mencatat koordinat GPS saat kamu absen."
+        }
       ]
     ],
     "experiments": {

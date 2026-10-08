@@ -6,6 +6,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CameraHeader, RoundButton, ShutterButton } from '@/components/absen/camera-chrome';
+import { GpsPill } from '@/components/absen/gps-pill';
 import {
   SelfieCamera,
   type CapturedPhoto,
@@ -23,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { AppText } from '@/components/ui/text';
 import { CameraColors } from '@/constants/camera-theme';
 import { Colors, Radius, Spacing } from '@/constants/theme';
+import { useCurrentLocation } from '@/hooks/use-current-location';
 import { useNow } from '@/hooks/use-now';
 import { useTodayAttendance } from '@/hooks/use-today-attendance';
 import { formatTime } from '@/lib/date';
@@ -34,6 +36,7 @@ export default function AbsenScreen() {
   const now = useNow();
   const today = useTodayAttendance();
   const phase = today?.phase;
+  const location = useCurrentLocation(phase === 'in' || phase === 'out');
 
   const camera = useRef<SelfieCameraHandle>(null);
   const [facing, setFacing] = useState<CameraType>('front');
@@ -100,6 +103,7 @@ export default function AbsenScreen() {
           </View>
         ) : (
           <>
+            <GpsPill location={location} />
             <SelfieCamera
               ref={camera}
               facing={facing}
