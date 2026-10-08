@@ -80,7 +80,12 @@ export function LargeTitleScreen({
         contentContainerStyle={styles.content}
         refreshControl={
           onRefresh ? (
-            <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={Colors.accent} colors={[Colors.accent]} />
+            <RefreshControl
+              refreshing={!!refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.accent}
+              colors={[Colors.accent]}
+            />
           ) : undefined
         }>
         <View style={styles.hero}>

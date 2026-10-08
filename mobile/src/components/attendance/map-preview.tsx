@@ -1,6 +1,12 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { StyleSheet, View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import Svg, { Defs, Path, Pattern, Rect } from 'react-native-svg';
 
 import { MapPinIcon } from '@/components/icons';
@@ -67,7 +73,9 @@ export function MapPreview({ latitude, longitude, style }: Props) {
       accessible
       accessibilityRole="image"
       accessibilityLabel={
-        has ? `Peta lokasi absen di ${latitude.toFixed(5)}, ${longitude.toFixed(5)}` : 'Lokasi tidak tersedia'
+        has
+          ? `Peta lokasi absen di ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
+          : 'Lokasi tidak tersedia'
       }>
       <Svg style={StyleSheet.absoluteFill}>
         <Defs>

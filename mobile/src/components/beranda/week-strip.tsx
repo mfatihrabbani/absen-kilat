@@ -98,12 +98,20 @@ function Dot({ status, progress }: { status: DayStatus; progress: number }) {
   }
 }
 
-type Props = { days: WeekDay[]; todayKey: string; summary: string; onSelect: (key: string) => void };
+type Props = {
+  days: WeekDay[];
+  todayKey: string;
+  summary: string;
+  onSelect: (key: string) => void;
+};
 
 /** Strip 7 hari "Minggu ini": tiap hari bisa diketuk untuk membuka riwayat tanggal itu. */
 export function WeekStrip({ days, todayKey, summary, onSelect }: Props) {
   return (
-    <Card style={styles.week} accessibilityRole="none" accessibilityLabel={`Minggu ini: hadir ${summary}`}>
+    <Card
+      style={styles.week}
+      accessibilityRole="none"
+      accessibilityLabel={`Minggu ini: hadir ${summary}`}>
       {days.map((d) => {
         const isToday = d.key === todayKey;
         return (

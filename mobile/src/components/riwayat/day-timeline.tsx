@@ -2,7 +2,15 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { StatusChip } from '@/components/attendance/status';
-import { CalendarXIcon, CameraIcon, CaretRightIcon, ClockIcon, CoffeeIcon, SignInIcon, SignOutIcon } from '@/components/icons';
+import {
+  CalendarXIcon,
+  CameraIcon,
+  CaretRightIcon,
+  ClockIcon,
+  CoffeeIcon,
+  SignInIcon,
+  SignOutIcon,
+} from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -47,14 +55,22 @@ function TimelineRow({
           <StatusChip late={!!late} />
         ) : (
           <AppText variant="bodySm" color="textMuted">
-            {item ? (item.accuracy != null ? `Lokasi ±${Math.round(item.accuracy)} m` : 'Lokasi tercatat') : pendingText}
+            {item
+              ? item.accuracy != null
+                ? `Lokasi ±${Math.round(item.accuracy)} m`
+                : 'Lokasi tercatat'
+              : pendingText}
           </AppText>
         )}
       </View>
       <AppText numeric style={styles.time} color={item ? 'text' : 'textFaint'}>
         {time ?? '--.--'}
       </AppText>
-      {item ? <CaretRightIcon size={16} weight="bold" color={Colors.textFaint} /> : <View style={styles.chevSpace} />}
+      {item ? (
+        <CaretRightIcon size={16} weight="bold" color={Colors.textFaint} />
+      ) : (
+        <View style={styles.chevSpace} />
+      )}
     </ListRow>
   );
 }
@@ -87,7 +103,11 @@ export function DayTimeline({ dateKey, record, now }: Props) {
             {record.out ? ' jam kerja' : ' sejauh ini'}
           </AppText>
         </View>
-        <TimelineRow type="out" item={record.out} pendingText={isToday ? 'Belum absen keluar' : 'Tidak tercatat'} />
+        <TimelineRow
+          type="out"
+          item={record.out}
+          pendingText={isToday ? 'Belum absen keluar' : 'Tidak tercatat'}
+        />
       </Card>
     );
   }

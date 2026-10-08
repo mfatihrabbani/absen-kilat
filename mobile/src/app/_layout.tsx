@@ -46,8 +46,18 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={navTheme}>
         <StatusBar style="dark" />
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.canvas } }}>
+        <Stack
+          screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.canvas } }}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="detail/[id]" />
+          <Stack.Screen
+            name="absen"
+            options={{
+              presentation: 'fullScreenModal',
+              animation: 'slide_from_bottom',
+              contentStyle: { backgroundColor: '#11120f' },
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </GestureHandlerRootView>

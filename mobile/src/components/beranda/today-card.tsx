@@ -24,7 +24,8 @@ import type { DayRecord } from '@/types/attendance';
 const SHIFT_LEN = Shift.end - Shift.start;
 
 /** `5.12` — jam.menit untuk isi cincin. */
-const clockDuration = (mins: number) => `${Math.floor(mins / 60)}.${String(mins % 60).padStart(2, '0')}`;
+const clockDuration = (mins: number) =>
+  `${Math.floor(mins / 60)}.${String(mins % 60).padStart(2, '0')}`;
 
 type Note = { text: string; tone?: 'ok' | 'late' };
 
@@ -102,7 +103,10 @@ export function TodayCard({ record, now }: Props) {
   const outNote: Note = outAt
     ? { text: 'Tercatat', tone: 'ok' }
     : inAt
-      ? { text: nowMin < Shift.end ? `Sisa ${formatDuration(Shift.end - nowMin)}` : 'Sudah bisa pulang' }
+      ? {
+          text:
+            nowMin < Shift.end ? `Sisa ${formatDuration(Shift.end - nowMin)}` : 'Sudah bisa pulang',
+        }
       : { text: 'Jam pulang 17.00' };
 
   const ringSize = compact ? 112 : 128;
@@ -134,7 +138,13 @@ export function TodayCard({ record, now }: Props) {
 
         <View style={styles.metrics}>
           <Metric icon={SignInIcon} label="Masuk" value={inAt && formatTime(inAt)} note={inNote} />
-          <Metric icon={SignOutIcon} label="Keluar" value={outAt && formatTime(outAt)} note={outNote} divider />
+          <Metric
+            icon={SignOutIcon}
+            label="Keluar"
+            value={outAt && formatTime(outAt)}
+            note={outNote}
+            divider
+          />
         </View>
       </View>
 
@@ -153,7 +163,9 @@ export function TodayCard({ record, now }: Props) {
             icon={inAt ? SignOutIcon : CameraIcon}
             label={inAt ? 'Absen Keluar' : 'Absen Masuk'}
             style={styles.cta}
-            onPress={() => router.push({ pathname: '/absen', params: { type: inAt ? 'out' : 'in' } })}
+            onPress={() =>
+              router.push({ pathname: '/absen', params: { type: inAt ? 'out' : 'in' } })
+            }
           />
           <View style={styles.hint} accessible accessibilityLabel="Selfie dan lokasi GPS otomatis">
             <UserFocusIcon size={15} color={Colors.textMuted} />
@@ -182,7 +194,12 @@ const styles = StyleSheet.create({
     gap: Spacing.four,
     ...Shadow.md,
   },
-  head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.three },
+  head: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.three,
+  },
   label: { fontSize: 15, lineHeight: 20, letterSpacing: -0.2 },
   body: { flexDirection: 'row', alignItems: 'center', gap: Spacing.five },
   ringBig: { fontSize: 28, lineHeight: 32, letterSpacing: -1 },

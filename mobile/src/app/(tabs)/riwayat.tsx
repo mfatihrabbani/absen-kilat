@@ -32,7 +32,8 @@ import {
 } from '@/lib/date';
 import type { DayRecords } from '@/types/attendance';
 
-const isDateKey = (s: unknown): s is string => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
+const isDateKey = (s: unknown): s is string =>
+  typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
 
 /** Kelompokkan tanggal yang punya absen per minggu (terbaru dulu) untuk feed aktivitas. */
 function groupFeed(records: DayRecords, now: Date) {
@@ -73,7 +74,9 @@ export default function RiwayatScreen() {
   const { records, loaded, error, refreshing, refresh } = useAttendanceHistory();
   const todayKey = toDateKey(now);
 
-  const [selected, setSelected] = useState(() => (isDateKey(params.date) && params.date <= todayKey ? params.date : todayKey));
+  const [selected, setSelected] = useState(() =>
+    isDateKey(params.date) && params.date <= todayKey ? params.date : todayKey,
+  );
   const [range, setRange] = useState<Range>('week');
   const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -113,9 +116,21 @@ export default function RiwayatScreen() {
           />,
         ]
       : [
-          <SummaryCard key="summary" records={records} selected={selected} range={range} onRangeChange={setRange} />,
+          <SummaryCard
+            key="summary"
+            records={records}
+            selected={selected}
+            range={range}
+            onRangeChange={setRange}
+          />,
 
-          <WeekPager key="pager" weeks={weeks} records={records} selected={selected} onSelect={setSelected} />,
+          <WeekPager
+            key="pager"
+            weeks={weeks}
+            records={records}
+            selected={selected}
+            onSelect={setSelected}
+          />,
 
           <Section key="day">
             <SectionHead
@@ -130,7 +145,12 @@ export default function RiwayatScreen() {
               <AppText variant="sectionTitle" accessibilityRole="header" numberOfLines={1}>
                 {g.title}
               </AppText>
-              <AppText variant="caption" color="textMuted" numeric numberOfLines={1} style={styles.shrink}>
+              <AppText
+                variant="caption"
+                color="textMuted"
+                numeric
+                numberOfLines={1}
+                style={styles.shrink}>
                 {g.meta}
               </AppText>
             </View>,
@@ -160,7 +180,9 @@ export default function RiwayatScreen() {
         eyebrow={periodLabel}
         title="Riwayat"
         actions={
-          <IconButton accessibilityLabel="Pilih tanggal dari kalender" onPress={() => setCalendarOpen(true)}>
+          <IconButton
+            accessibilityLabel="Pilih tanggal dari kalender"
+            onPress={() => setCalendarOpen(true)}>
             <CalendarDotsIcon size={20} color={Colors.text} />
           </IconButton>
         }

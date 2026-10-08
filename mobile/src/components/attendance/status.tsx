@@ -12,9 +12,22 @@ import type { DayTone } from '@/lib/attendance';
  * Tepat waktu = hijau + ikon centang; Terlambat = oranye + ikon jam mundur.
  * Status selalu ditampilkan dengan ikon/pola + teks, tidak pernah warna saja.
  */
-export const STATUS: Record<DayTone, { label: string; icon: Icon; color: string; textColor: ColorName }> = {
-  ok: { label: 'Tepat waktu', icon: CheckCircleIcon, color: Colors.positive, textColor: 'positiveText' },
-  late: { label: 'Terlambat', icon: ClockCountdownIcon, color: Colors.warning, textColor: 'warningText' },
+export const STATUS: Record<
+  DayTone,
+  { label: string; icon: Icon; color: string; textColor: ColorName }
+> = {
+  ok: {
+    label: 'Tepat waktu',
+    icon: CheckCircleIcon,
+    color: Colors.positive,
+    textColor: 'positiveText',
+  },
+  late: {
+    label: 'Terlambat',
+    icon: ClockCountdownIcon,
+    color: Colors.warning,
+    textColor: 'warningText',
+  },
 };
 
 export const toneFromLate = (late: boolean): DayTone => (late ? 'late' : 'ok');
@@ -75,7 +88,12 @@ export function LateStripes({ height }: { height: number }) {
   return (
     <Svg width="100%" height={height}>
       <Defs>
-        <Pattern id="late-stripes" patternUnits="userSpaceOnUse" width={6} height={6} patternTransform="rotate(45)">
+        <Pattern
+          id="late-stripes"
+          patternUnits="userSpaceOnUse"
+          width={6}
+          height={6}
+          patternTransform="rotate(45)">
           <Rect width={6} height={6} fill={Colors.warning} />
           <Line x1={0} y1={0} x2={0} y2={6} stroke={Colors.warningStrong} strokeWidth={6} />
         </Pattern>

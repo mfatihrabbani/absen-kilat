@@ -47,7 +47,10 @@ export function BottomSheet({ visible, onClose, accessibilityLabel, children }: 
   const close: Close = (after) => {
     if (closing.value) return;
     closing.value = true;
-    translateY.value = withTiming(OFFSCREEN, { duration: CLOSE_MS, easing: Easing.in(Easing.ease) });
+    translateY.value = withTiming(OFFSCREEN, {
+      duration: CLOSE_MS,
+      easing: Easing.in(Easing.ease),
+    });
     setTimeout(() => {
       onClose();
       after?.();
@@ -81,7 +84,12 @@ export function BottomSheet({ visible, onClose, accessibilityLabel, children }: 
       onRequestClose={dismiss}>
       <GestureHandlerRootView style={styles.root}>
         <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, backdropStyle]}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={dismiss} accessibilityRole="button" accessibilityLabel="Tutup" />
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={dismiss}
+            accessibilityRole="button"
+            accessibilityLabel="Tutup"
+          />
         </Animated.View>
         <Animated.View
           accessibilityViewIsModal

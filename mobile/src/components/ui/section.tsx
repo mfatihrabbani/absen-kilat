@@ -60,5 +60,11 @@ const styles = StyleSheet.create({
   },
   meta: { flexShrink: 1, fontSize: 15, lineHeight: 20 },
   metaText: { fontSize: 15, lineHeight: 20 },
-  link: { flexDirection: 'row', alignItems: 'center', gap: 2, paddingLeft: Spacing.two, flexShrink: 0 },
+  link: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    paddingLeft: Spacing.two,
+    flexShrink: 0,
+  },
 });

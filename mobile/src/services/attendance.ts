@@ -14,7 +14,9 @@ export type AttendanceQuery = { date: string } | { from: string; to: string };
  */
 export async function listAttendances(query: AttendanceQuery): Promise<Attendance[]> {
   await delay(300);
-  return 'date' in query ? mockListRange(query.date, query.date) : mockListRange(query.from, query.to);
+  return 'date' in query
+    ? mockListRange(query.date, query.date)
+    : mockListRange(query.from, query.to);
 }
 
 /**

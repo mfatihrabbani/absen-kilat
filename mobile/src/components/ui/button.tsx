@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  type PressableProps,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
 import type { Icon } from '@/components/icons';
 import { AppText } from '@/components/ui/text';
@@ -62,7 +69,9 @@ export function Button({
       ) : (
         IconCmp && <IconCmp size={20} color={fg} />
       )}
-      <AppText style={[styles.label, { color: fg }]}>{busy && busyLabel ? busyLabel : label}</AppText>
+      <AppText style={[styles.label, { color: fg }]}>
+        {busy && busyLabel ? busyLabel : label}
+      </AppText>
       {trailing}
     </Pressable>
   );

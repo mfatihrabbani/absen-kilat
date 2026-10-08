@@ -25,7 +25,11 @@ export default function TabsLayout() {
           title: 'Absen',
           tabBarAccessibilityLabel: 'Absen, beranda',
           tabBarIcon: ({ focused }) => (
-            <FingerprintIcon size={25} color={focused ? Colors.text : Colors.textMuted} weight={focused ? 'fill' : 'regular'} />
+            <FingerprintIcon
+              size={25}
+              color={focused ? Colors.text : Colors.textMuted}
+              weight={focused ? 'fill' : 'regular'}
+            />
           ),
         }}
       />
@@ -34,7 +38,11 @@ export default function TabsLayout() {
         options={{
           title: 'Riwayat',
           tabBarIcon: ({ focused }) => (
-            <CalendarBlankIcon size={25} color={focused ? Colors.text : Colors.textMuted} weight={focused ? 'fill' : 'regular'} />
+            <CalendarBlankIcon
+              size={25}
+              color={focused ? Colors.text : Colors.textMuted}
+              weight={focused ? 'fill' : 'regular'}
+            />
           ),
         }}
       />

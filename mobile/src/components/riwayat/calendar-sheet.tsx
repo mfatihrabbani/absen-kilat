@@ -39,7 +39,10 @@ export function CalendarSheet({ visible, onClose, records, selected, earliest, o
 
   const cells: (Date | null)[] = [
     ...Array.from({ length: lead }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, i) => new Date(month.getFullYear(), month.getMonth(), i + 1, 12)),
+    ...Array.from(
+      { length: daysInMonth },
+      (_, i) => new Date(month.getFullYear(), month.getMonth(), i + 1, 12),
+    ),
   ];
   while (cells.length % 7) cells.push(null);
   const rows = Array.from({ length: cells.length / 7 }, (_, r) => cells.slice(r * 7, r * 7 + 7));
@@ -51,13 +54,24 @@ export function CalendarSheet({ visible, onClose, records, selected, earliest, o
       {(close) => (
         <>
           <View style={styles.head}>
-            <IconButton size={44} accessibilityLabel="Bulan sebelumnya" disabled={!canPrev} onPress={() => shift(-1)}>
+            <IconButton
+              size={44}
+              accessibilityLabel="Bulan sebelumnya"
+              disabled={!canPrev}
+              onPress={() => shift(-1)}>
               <CaretLeftIcon size={20} color={Colors.text} />
             </IconButton>
-            <AppText variant="headingSm" accessibilityRole="header" accessibilityLiveRegion="polite">
+            <AppText
+              variant="headingSm"
+              accessibilityRole="header"
+              accessibilityLiveRegion="polite">
               {monthLabel(month)}
             </AppText>
-            <IconButton size={44} accessibilityLabel="Bulan berikutnya" disabled={!canNext} onPress={() => shift(1)}>
+            <IconButton
+              size={44}
+              accessibilityLabel="Bulan berikutnya"
+              disabled={!canNext}
+              onPress={() => shift(1)}>
               <CaretRightIcon size={20} color={Colors.text} />
             </IconButton>
           </View>
@@ -96,7 +110,15 @@ export function CalendarSheet({ visible, onClose, records, selected, earliest, o
                         numeric
                         weight={isToday ? 'semibold' : 'regular'}
                         color={
-                          active ? 'onPrimary' : future ? 'textFaint' : isToday ? 'accentText' : isWeekend(d) ? 'textMuted' : 'text'
+                          active
+                            ? 'onPrimary'
+                            : future
+                              ? 'textFaint'
+                              : isToday
+                                ? 'accentText'
+                                : isWeekend(d)
+                                  ? 'textMuted'
+                                  : 'text'
                         }>
                         {d.getDate()}
                       </AppText>
@@ -124,8 +146,17 @@ export function CalendarSheet({ visible, onClose, records, selected, earliest, o
           </View>
 
           <View style={styles.actions}>
-            <Button label="Hari ini" style={styles.flex1} onPress={() => close(() => onSelect(todayKey))} />
-            <Button label="Selesai" variant="primary" style={styles.flex16} onPress={() => close()} />
+            <Button
+              label="Hari ini"
+              style={styles.flex1}
+              onPress={() => close(() => onSelect(todayKey))}
+            />
+            <Button
+              label="Selesai"
+              variant="primary"
+              style={styles.flex16}
+              onPress={() => close()}
+            />
           </View>
         </>
       )}

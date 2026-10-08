@@ -59,7 +59,11 @@ export default function DetailAbsenScreen() {
             <EmptyState
               icon={state.status === 'missing' ? CalendarXIcon : WarningCircleIcon}
               title={state.status === 'missing' ? 'Catatan tidak ditemukan' : 'Gagal memuat'}
-              body={state.status === 'missing' ? 'Pilih entri absen dari halaman Riwayat.' : state.message}
+              body={
+                state.status === 'missing'
+                  ? 'Pilih entri absen dari halaman Riwayat.'
+                  : state.message
+              }
               action={<Button label="Buka Riwayat" onPress={() => router.navigate('/riwayat')} />}
             />
           </Card>
@@ -112,7 +116,12 @@ export default function DetailAbsenScreen() {
           accessibilityRole="image"
           accessibilityLabel={`Foto selfie saat ${TYPE_TITLE[item.type].toLowerCase()} pukul ${formatTime(at)}`}>
           <UserIcon size={72} color={Colors.textMuted} style={styles.photoFallback} />
-          <Image source={item.photoUrl} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+          <Image
+            source={item.photoUrl}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+            transition={200}
+          />
           <View style={styles.photoTag}>
             <Chip label={`Selfie · ${formatTime(at)}`} />
           </View>
@@ -133,7 +142,9 @@ export default function DetailAbsenScreen() {
           </InfoRow>
         ) : null}
         <InfoRow label="Koordinat">{coords}</InfoRow>
-        <InfoRow label="Akurasi GPS">{item.accuracy != null ? `±${Math.round(item.accuracy)} m` : '–'}</InfoRow>
+        <InfoRow label="Akurasi GPS">
+          {item.accuracy != null ? `±${Math.round(item.accuracy)} m` : '–'}
+        </InfoRow>
       </ListGroup>
     </PushedScreen>
   );
@@ -208,5 +219,11 @@ const styles = StyleSheet.create({
   },
   infoMain: { flex: 1, minWidth: 0 },
   infoValue: { lineHeight: 22 },
-  status: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two, flexWrap: 'wrap', marginTop: 2 },
+  status: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    flexWrap: 'wrap',
+    marginTop: 2,
+  },
 });

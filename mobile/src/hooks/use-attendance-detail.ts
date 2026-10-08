@@ -24,9 +24,17 @@ export function useAttendanceDetail(id: number) {
         if (!attendance) return done({ status: 'missing' });
         const dateKey = toDateKey(new Date(attendance.timestamp));
         const day = groupByDay(await listAttendances({ date: dateKey }))[dateKey] ?? {};
-        done({ status: 'ready', attendance, dateKey, day: { ...day, [attendance.type]: attendance } });
+        done({
+          status: 'ready',
+          attendance,
+          dateKey,
+          day: { ...day, [attendance.type]: attendance },
+        });
       } catch (e) {
-        done({ status: 'error', message: e instanceof Error ? e.message : 'Gagal memuat detail absen' });
+        done({
+          status: 'error',
+          message: e instanceof Error ? e.message : 'Gagal memuat detail absen',
+        });
       }
     })();
     return () => {

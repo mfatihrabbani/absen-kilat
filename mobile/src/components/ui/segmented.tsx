@@ -13,9 +13,17 @@ type Props<T extends string> = {
 };
 
 /** Segmented control gaya iOS (`.p-riwayat__seg`). */
-export function Segmented<T extends string>({ options, value, onChange, accessibilityLabel }: Props<T>) {
+export function Segmented<T extends string>({
+  options,
+  value,
+  onChange,
+  accessibilityLabel,
+}: Props<T>) {
   return (
-    <View style={styles.track} accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel}>
+    <View
+      style={styles.track}
+      accessibilityRole="radiogroup"
+      accessibilityLabel={accessibilityLabel}>
       {options.map((o) => {
         const active = o.value === value;
         return (

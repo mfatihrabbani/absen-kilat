@@ -2,13 +2,30 @@ import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { LateStripes, STATUS } from '@/components/attendance/status';
-import { ArrowDownLeftIcon, ArrowUpRightIcon, SignInIcon, TimerIcon, type Icon } from '@/components/icons';
+import {
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
+  SignInIcon,
+  TimerIcon,
+  type Icon,
+} from '@/components/icons';
 import { Card } from '@/components/ui/card';
 import { Segmented } from '@/components/ui/segmented';
 import { AppText } from '@/components/ui/text';
 import { Colors, Fonts, Radius, Shift, Spacing } from '@/constants/theme';
 import { isLate, timeOf, workedMinutes } from '@/lib/attendance';
-import { addDays, dayName, dayShort, formatDuration, fromDateKey, isWeekend, minutesOf, mondayOf, pad, toDateKey } from '@/lib/date';
+import {
+  addDays,
+  dayName,
+  dayShort,
+  formatDuration,
+  fromDateKey,
+  isWeekend,
+  minutesOf,
+  mondayOf,
+  pad,
+  toDateKey,
+} from '@/lib/date';
 import type { Attendance, DayRecord, DayRecords } from '@/types/attendance';
 
 export type Range = 'week' | 'month';
@@ -36,7 +53,17 @@ export function rangeOf(selected: string, range: Range) {
   };
 }
 
-function Tile({ icon: IconCmp, label, children, divider }: { icon: Icon; label: string; children: ReactNode; divider?: boolean }) {
+function Tile({
+  icon: IconCmp,
+  label,
+  children,
+  divider,
+}: {
+  icon: Icon;
+  label: string;
+  children: ReactNode;
+  divider?: boolean;
+}) {
   return (
     <View style={[styles.tile, divider && styles.tileDivider]}>
       <View style={styles.k}>
@@ -132,7 +159,11 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
             </View>
             <View
               accessible
-              accessibilityLabel={pct === null ? 'Belum ada hari kerja yang selesai' : `Tingkat kehadiran ${pct} persen`}
+              accessibilityLabel={
+                pct === null
+                  ? 'Belum ada hari kerja yang selesai'
+                  : `Tingkat kehadiran ${pct} persen`
+              }
               style={[
                 styles.rate,
                 pct === null
@@ -161,13 +192,19 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
             {days.map((x) => (
               <View
                 key={x.key}
-                style={[styles.seg, { height: segHeight, borderRadius: dense ? 3 : 4 }, x.status !== 'late' && segColor(x.status)]}>
+                style={[
+                  styles.seg,
+                  { height: segHeight, borderRadius: dense ? 3 : 4 },
+                  x.status !== 'late' && segColor(x.status),
+                ]}>
                 {x.status === 'late' && <LateStripes height={segHeight} />}
               </View>
             ))}
           </View>
           {range === 'week' && (
-            <View style={[styles.bar, styles.barDays]} importantForAccessibility="no-hide-descendants">
+            <View
+              style={[styles.bar, styles.barDays]}
+              importantForAccessibility="no-hide-descendants">
               {days.map((x) => (
                 <AppText
                   key={x.key}
@@ -181,7 +218,11 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
           )}
 
           <View style={styles.legend}>
-            <LegendItem swatch={<View style={[styles.swatch, { backgroundColor: STATUS.ok.color }]} />} label={STATUS.ok.label} value={ok} />
+            <LegendItem
+              swatch={<View style={[styles.swatch, { backgroundColor: STATUS.ok.color }]} />}
+              label={STATUS.ok.label}
+              value={ok}
+            />
             <LegendItem
               swatch={
                 <View style={styles.swatch}>
@@ -192,7 +233,11 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
               value={late}
             />
             <LegendItem
-              swatch={<View style={[styles.swatch, { borderWidth: 1.5, borderColor: Colors.borderStrong }]} />}
+              swatch={
+                <View
+                  style={[styles.swatch, { borderWidth: 1.5, borderColor: Colors.borderStrong }]}
+                />
+              }
               label="Tidak hadir"
               value={missed}
             />
@@ -205,7 +250,8 @@ export function SummaryCard({ records, selected, range, onRangeChange }: Props) 
               {avg === null ? '--.--' : `${pad(Math.floor(avg / 60))}.${pad(avg % 60)}`}
             </AppText>
             <View style={styles.k}>
-              {avg !== null && diff !== 0 &&
+              {avg !== null &&
+                diff !== 0 &&
                 (diff > 0 ? (
                   <ArrowUpRightIcon size={14} weight="bold" color={Colors.warningText} />
                 ) : (
@@ -259,8 +305,19 @@ const styles = StyleSheet.create({
   card: { overflow: 'hidden' },
   shrink: { flexShrink: 1 },
   att: { padding: Spacing.four, gap: Spacing.three },
-  attHead: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: Spacing.three },
-  attValue: { flexDirection: 'row', alignItems: 'baseline', gap: 6, flexWrap: 'wrap', marginTop: 2 },
+  attHead: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: Spacing.three,
+  },
+  attValue: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 6,
+    flexWrap: 'wrap',
+    marginTop: 2,
+  },
   attCount: { fontFamily: Fonts.semibold, fontSize: 34, lineHeight: 38, letterSpacing: -1.2 },
   attOf: { fontSize: 15, lineHeight: 20 },
   rate: { paddingHorizontal: 10, paddingVertical: Spacing.one, borderRadius: Radius.pill },
@@ -272,9 +329,22 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   swatch: { width: 10, height: 10, borderRadius: 3, overflow: 'hidden' },
   tiles: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: Colors.border },
-  tile: { flex: 1, minWidth: 0, gap: 2, paddingTop: Spacing.three, paddingHorizontal: Spacing.four, paddingBottom: Spacing.four },
+  tile: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
+    paddingTop: Spacing.three,
+    paddingHorizontal: Spacing.four,
+    paddingBottom: Spacing.four,
+  },
   tileDivider: { borderLeftWidth: 1, borderLeftColor: Colors.border },
   k: { flexDirection: 'row', alignItems: 'center', gap: Spacing.one },
-  tileValue: { fontFamily: Fonts.semibold, fontSize: 28, lineHeight: 34, letterSpacing: -1, marginTop: 2 },
+  tileValue: {
+    fontFamily: Fonts.semibold,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -1,
+    marginTop: 2,
+  },
   unit: { fontFamily: Fonts.medium, fontSize: 15, letterSpacing: -0.2, color: Colors.textMuted },
 });

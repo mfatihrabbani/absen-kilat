@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { FlatList, Pressable, StyleSheet, View, type LayoutChangeEvent, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 
 import { StatusMark } from '@/components/attendance/status';
 import { CaretLeftIcon, CaretRightIcon } from '@/components/icons';
@@ -7,7 +15,16 @@ import { Card } from '@/components/ui/card';
 import { AppText } from '@/components/ui/text';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { statusLabel, toneOf } from '@/lib/attendance';
-import { addDays, dayShort, formatLongDate, fromDateKey, isWeekend, mondayOf, toDateKey, weekLabel } from '@/lib/date';
+import {
+  addDays,
+  dayShort,
+  formatLongDate,
+  fromDateKey,
+  isWeekend,
+  mondayOf,
+  toDateKey,
+  weekLabel,
+} from '@/lib/date';
 import type { DayRecords } from '@/types/attendance';
 
 type Props = {
@@ -27,7 +44,9 @@ export function WeekPager({ weeks, records, selected, onSelect }: Props) {
   const current = Math.min(weeks.length - 1, Math.max(0, index));
 
   // Gulir ke minggu yang memuat tanggal terpilih (mis. dipilih dari kalender).
-  const selectedWeek = weeks.findIndex((m) => toDateKey(m) === toDateKey(mondayOf(fromDateKey(selected))));
+  const selectedWeek = weeks.findIndex(
+    (m) => toDateKey(m) === toDateKey(mondayOf(fromDateKey(selected))),
+  );
   useEffect(() => {
     if (width && selectedWeek >= 0) {
       listRef.current?.scrollToOffset({ offset: selectedWeek * width, animated: false });
@@ -52,88 +71,106 @@ export function WeekPager({ weeks, records, selected, onSelect }: Props) {
           {weeks[current] ? weekLabel(weeks[current]) : ''}
         </AppText>
         <View style={styles.nav}>
-          <NavButton label="Minggu sebelumnya" disabled={current <= 0} onPress={() => goTo(current - 1)}>
-            <CaretLeftIcon size={18} weight="bold" color={current <= 0 ? Colors.textFaint : Colors.text} />
+          <NavButton
+            label="Minggu sebelumnya"
+            disabled={current <= 0}
+            onPress={() => goTo(current - 1)}>
+            <CaretLeftIcon
+              size={18}
+              weight="bold"
+              color={current <= 0 ? Colors.textFaint : Colors.text}
+            />
           </NavButton>
-          <NavButton label="Minggu berikutnya" disabled={current >= weeks.length - 1} onPress={() => goTo(current + 1)}>
-            <CaretRightIcon size={18} weight="bold" color={current >= weeks.length - 1 ? Colors.textFaint : Colors.text} />
+          <NavButton
+            label="Minggu berikutnya"
+            disabled={current >= weeks.length - 1}
+            onPress={() => goTo(current + 1)}>
+            <CaretRightIcon
+              size={18}
+              weight="bold"
+              color={current >= weeks.length - 1 ? Colors.textFaint : Colors.text}
+            />
           </NavButton>
         </View>
       </View>
 
       <Card style={styles.card}>
         <View onLayout={(e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width)}>
-        {width > 0 && (
-          <FlatList
-            ref={listRef}
-            data={weeks}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(m) => toDateKey(m)}
-            initialScrollIndex={selectedWeek >= 0 ? selectedWeek : weeks.length - 1}
-            getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
-            onScroll={onScroll}
-            scrollEventThrottle={32}
-            renderItem={({ item: monday }) => (
-              <View style={[styles.page, { width }]} accessibilityLabel={`Minggu ${weekLabel(monday)}`}>
-                {Array.from({ length: 7 }, (_, i) => {
-                  const d = addDays(monday, i);
-                  const key = toDateKey(d);
-                  const rec = records[key];
-                  const isToday = key === todayKey;
-                  const future = key > todayKey;
-                  const active = key === selected;
-                  return (
-                    <Pressable
-                      key={key}
-                      disabled={future}
-                      onPress={() => onSelect(key)}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: active, disabled: future }}
-                      accessibilityLabel={`${formatLongDate(d)}${isToday ? ', hari ini' : ''}, ${isWeekend(d) ? 'akhir pekan' : statusLabel(rec)}`}
-                      style={styles.wday}>
-                      {({ pressed }) => (
-                        <>
-                          <AppText variant="label" color="textMuted" style={styles.dow}>
-                            {dayShort(d)}
-                          </AppText>
-                          <View
-                            style={[
-                              styles.num,
-                              pressed && { backgroundColor: Colors.surfaceMuted },
-                              active && { backgroundColor: isToday ? Colors.accent : Colors.primary },
-                            ]}>
-                            <AppText
-                              numeric
-                              weight={isToday || active ? 'semibold' : 'medium'}
-                              style={styles.numText}
-                              color={
-                                active
-                                  ? isToday
-                                    ? 'onAccent'
-                                    : 'onPrimary'
-                                  : future
-                                    ? 'textFaint'
-                                    : isToday
-                                      ? 'accentText'
-                                      : isWeekend(d)
-                                        ? 'textMuted'
-                                        : 'text'
-                              }>
-                              {d.getDate()}
+          {width > 0 && (
+            <FlatList
+              ref={listRef}
+              data={weeks}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(m) => toDateKey(m)}
+              initialScrollIndex={selectedWeek >= 0 ? selectedWeek : weeks.length - 1}
+              getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
+              onScroll={onScroll}
+              scrollEventThrottle={32}
+              renderItem={({ item: monday }) => (
+                <View
+                  style={[styles.page, { width }]}
+                  accessibilityLabel={`Minggu ${weekLabel(monday)}`}>
+                  {Array.from({ length: 7 }, (_, i) => {
+                    const d = addDays(monday, i);
+                    const key = toDateKey(d);
+                    const rec = records[key];
+                    const isToday = key === todayKey;
+                    const future = key > todayKey;
+                    const active = key === selected;
+                    return (
+                      <Pressable
+                        key={key}
+                        disabled={future}
+                        onPress={() => onSelect(key)}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: active, disabled: future }}
+                        accessibilityLabel={`${formatLongDate(d)}${isToday ? ', hari ini' : ''}, ${isWeekend(d) ? 'akhir pekan' : statusLabel(rec)}`}
+                        style={styles.wday}>
+                        {({ pressed }) => (
+                          <>
+                            <AppText variant="label" color="textMuted" style={styles.dow}>
+                              {dayShort(d)}
                             </AppText>
-                          </View>
-                          <StatusMark tone={toneOf(rec)} />
-                        </>
-                      )}
-                    </Pressable>
-                  );
-                })}
-              </View>
-            )}
-          />
-        )}
+                            <View
+                              style={[
+                                styles.num,
+                                pressed && { backgroundColor: Colors.surfaceMuted },
+                                active && {
+                                  backgroundColor: isToday ? Colors.accent : Colors.primary,
+                                },
+                              ]}>
+                              <AppText
+                                numeric
+                                weight={isToday || active ? 'semibold' : 'medium'}
+                                style={styles.numText}
+                                color={
+                                  active
+                                    ? isToday
+                                      ? 'onAccent'
+                                      : 'onPrimary'
+                                    : future
+                                      ? 'textFaint'
+                                      : isToday
+                                        ? 'accentText'
+                                        : isWeekend(d)
+                                          ? 'textMuted'
+                                          : 'text'
+                                }>
+                                {d.getDate()}
+                              </AppText>
+                            </View>
+                            <StatusMark tone={toneOf(rec)} />
+                          </>
+                        )}
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
+            />
+          )}
         </View>
       </Card>
     </View>
@@ -176,7 +213,13 @@ const styles = StyleSheet.create({
   },
   label: { fontSize: 15, lineHeight: 20, letterSpacing: -0.2 },
   nav: { flexDirection: 'row', gap: Spacing.one, marginVertical: -6, marginRight: -6 },
-  navBtn: { width: 36, height: 36, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
+  navBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: Radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   card: { overflow: 'hidden', minHeight: 90 },
   page: {
     flexDirection: 'row',

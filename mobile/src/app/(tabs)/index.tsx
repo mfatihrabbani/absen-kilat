@@ -54,7 +54,12 @@ export default function BerandaScreen() {
 
           <Section key="week">
             <SectionHead title="Minggu ini" meta={week.summary} />
-            <WeekStrip days={week.days} todayKey={todayKey} summary={week.summary} onSelect={openRiwayat} />
+            <WeekStrip
+              days={week.days}
+              todayKey={todayKey}
+              summary={week.summary}
+              onSelect={openRiwayat}
+            />
           </Section>,
 
           <Section key="history">
@@ -75,7 +80,11 @@ export default function BerandaScreen() {
                 })}
               </ListGroup>
             ) : (
-              <EmptyState icon={WarningCircleIcon} title="Belum ada riwayat" body="Absen pertamamu akan muncul di sini." />
+              <EmptyState
+                icon={WarningCircleIcon}
+                title="Belum ada riwayat"
+                body="Absen pertamamu akan muncul di sini."
+              />
             )}
           </Section>,
         ]

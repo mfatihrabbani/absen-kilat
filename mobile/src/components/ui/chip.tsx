@@ -14,7 +14,8 @@ type ChipProps = {
 
 /** Chip status kecil (`.ak-chip`). Warna selalu disertai teks + ikon, tidak warna saja. */
 export function Chip({ label, tone = 'neutral', icon: IconCmp }: ChipProps) {
-  const iconColor = tone === 'ok' ? Colors.positive : tone === 'late' ? Colors.warning : Colors.textSoft;
+  const iconColor =
+    tone === 'ok' ? Colors.positive : tone === 'late' ? Colors.warning : Colors.textSoft;
   return (
     <View style={styles.chip}>
       {IconCmp && <IconCmp size={14} weight="fill" color={iconColor} />}
