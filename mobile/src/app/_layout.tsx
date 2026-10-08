@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Colors } from '@/constants/theme';
 import { useSession } from '@/lib/session';
+import { bootstrapSession } from '@/services/auth';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +40,11 @@ export default function RootLayout() {
   const ready = (fontsLoaded || !!fontError) && session.status !== 'loading';
   // Aplikasi hanya terbuka untuk sesi dengan email terverifikasi.
   const canUseApp = session.status === 'signed-in' && session.user.emailVerified;
+
+  // Pulihkan sesi login tersimpan sekali saat aplikasi dibuka.
+  useEffect(() => {
+    bootstrapSession();
+  }, []);
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();

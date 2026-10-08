@@ -1,32 +1,29 @@
-import { mockCreate, mockFindById, mockListRange } from '@/mocks/attendances';
+import { ApiError, apiFetch, appendFile } from '@/lib/api';
 import type { Attendance, AttendanceType } from '@/types/attendance';
-
-/** Simulasi latensi jaringan supaya state loading ikut teruji. */
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export type AttendanceQuery = { date: string } | { from: string; to: string };
 
 /**
  * Daftar absen milik pengguna, urut kronologis.
- * Kontrak: `GET /api/attendance?date=YYYY-MM-DD` atau
- * `GET /api/attendance?from=YYYY-MM-DD&to=YYYY-MM-DD` → `{ data: Attendance[] }`.
- * Sementara masih memakai data tiruan.
+ * `GET /api/attendance?date=YYYY-MM-DD` atau `?from=YYYY-MM-DD&to=YYYY-MM-DD`.
  */
 export async function listAttendances(query: AttendanceQuery): Promise<Attendance[]> {
-  await delay(300);
-  return 'date' in query
-    ? mockListRange(query.date, query.date)
-    : mockListRange(query.from, query.to);
+  const params = new URLSearchParams(
+    'date' in query ? { date: query.date } : { from: query.from, to: query.to },
+  );
+  const res = await apiFetch<{ data: Attendance[] }>(`/api/attendance?${params}`);
+  return res.data;
 }
 
-/**
- * Satu catatan absen milik pengguna.
- * Kontrak: `GET /api/attendance/:id` → `{ data: Attendance }`, 404 bila tidak ada.
- * Mengembalikan `null` bila tidak ditemukan.
- */
+/** Satu catatan absen (`GET /api/attendance/:id`); `null` bila tidak ditemukan. */
 export async function getAttendance(id: number): Promise<Attendance | null> {
-  await delay(200);
-  return mockFindById(id) ?? null;
+  try {
+    const res = await apiFetch<{ data: Attendance }>(`/api/attendance/${id}`);
+    return res.data;
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null;
+    throw e;
+  }
 }
 
 export type NewAttendance = {
@@ -39,18 +36,20 @@ export type NewAttendance = {
 };
 
 /**
- * Catat absen masuk/keluar. Waktu & status (tepat waktu/terlambat) ditentukan server.
- * Kontrak: `POST /api/attendance` (multipart: `photo`, `type`, `latitude`, `longitude`,
- * `accuracy`) → `201 { data: Attendance }`.
+ * Catat absen masuk/keluar (`POST /api/attendance`, multipart). Waktu & status
+ * (tepat waktu/terlambat) ditentukan server; 409 bila sudah absen hari ini.
  */
 export async function createAttendance(input: NewAttendance): Promise<Attendance> {
-  await delay(900);
-  return mockCreate({
-    type: input.type,
-    photoUrl: input.photoUri,
-    latitude: input.latitude,
-    longitude: input.longitude,
-    accuracy: input.accuracy,
-    timestamp: new Date().toISOString(),
+  const form = new FormData();
+  form.append('type', input.type);
+  if (input.latitude != null) form.append('latitude', String(input.latitude));
+  if (input.longitude != null) form.append('longitude', String(input.longitude));
+  if (input.accuracy != null) form.append('accuracy', String(input.accuracy));
+  await appendFile(form, 'photo', { uri: input.photoUri, name: 'selfie.jpg', type: 'image/jpeg' });
+
+  const res = await apiFetch<{ data: Attendance }>('/api/attendance', {
+    method: 'POST',
+    body: form,
   });
+  return res.data;
 }

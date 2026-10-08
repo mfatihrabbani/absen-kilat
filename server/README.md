@@ -9,10 +9,10 @@ cd server
 npm install
 cp .env.example .env      # opsional, nilai bawaan sudah cukup untuk lokal
 npm run db:setup          # buat tabel (migrasi) + isi data contoh
-npm run dev               # http://localhost:3000 (auto-reload)
+npm run dev               # http://localhost:4000 (auto-reload)
 ```
 
-Cek: `curl http://localhost:3000/api/health` → `{"ok":true}`.
+Cek: `curl http://localhost:4000/api/health` → `{"ok":true}`.
 
 Akun contoh dari `db:seed`: **budi.santoso@contoh.id** / **rahasia123**. Foto selfie contoh
 berupa ilustrasi kartun (DiceBear), bukan foto orang sungguhan.
@@ -34,13 +34,13 @@ berupa ilustrasi kartun (DiceBear), bukan foto orang sungguhan.
 
 | Nama | Bawaan | Keterangan |
 | --- | --- | --- |
-| `PORT` | `3000` | Port HTTP |
+| `PORT` | `4000` | Port HTTP |
 | `DATABASE_URL` | `file:./data/absen-kilat.db` | Lokasi database SQLite |
 | `UPLOAD_DIR` | `./uploads` | Folder foto absen & foto profil |
 | `ATTENDANCE_PHOTO_MAX_MB` / `AVATAR_MAX_MB` | `8` / `5` | Batas ukuran foto absen / foto profil |
 | `BETTER_AUTH_URL` | `http://localhost:PORT` | URL publik server untuk Better Auth |
 | `BETTER_AUTH_SECRET` | secret pengembangan | **Wajib** diisi di produksi |
-| `TRUSTED_ORIGINS` | `absenkilat://,exp://,http://localhost:8081` | Asal yang dipercaya untuk request auth |
+| `TRUSTED_ORIGINS` | `absenkilat://`, `exp://`, + localhost/IP LAN saat pengembangan | Asal yang dipercaya untuk request auth |
 | `APP_VERIFIED_URL` | `absenkilat://email-terverifikasi` | Tujuan redirect tautan verifikasi |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | — | Pengiriman email; kosongkan host untuk mode konsol |
 

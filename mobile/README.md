@@ -22,15 +22,21 @@ npx expo lint
 > Kamera (`expo-camera`), lokasi (`expo-location`), pemilih gambar, dan pengingat
 > (`expo-notifications`) butuh perangkat/emulator; di web sebagian fitur terbatas.
 
-## Data
+## Server
 
-Saat ini layanan di `src/services/*` masih memakai **data tiruan** (`src/mocks`), dengan kontrak
-yang sama dengan API server di `../server` (lihat `server/README.md`). Akun tiruan:
+Aplikasi memakai API di `../server` (lihat `server/README.md`): jalankan `npm run dev` di sana dulu.
+Alamat server ditentukan otomatis dari komputer yang menjalankan Metro (`http://<ip-komputer>:4000`);
+atur `EXPO_PUBLIC_API_URL` untuk server lain. Sesi login (Better Auth) disimpan di SecureStore.
 
-- Masuk dengan email apa pun + kata sandi ≥ 8 karakter (mis. `budi.santoso@contoh.id` / `rahasia123`);
-  `salah12345` menampilkan pesan gagal. Foto selfie tiruan berupa ilustrasi kartun, bukan foto orang.
-- Email berawalan `belum…` dianggap belum terverifikasi; kode `000000` ditolak.
-- Daftar dengan `dipakai@contoh.com` menampilkan "email sudah terdaftar".
+Skenario uji:
+
+- Masuk dengan **budi.santoso@contoh.id** / **rahasia123** (berisi riwayat 20 hari kerja).
+- Daftar akun baru → kode verifikasi 6 digit muncul di terminal server (tanpa SMTP).
+- Lupa kata sandi → tautan reset muncul di terminal server; buka dari HP/browser yang sama.
+- Absen masuk lalu keluar: status terlambat dihitung server (batas 08.00 WIB); absen ketiga ditolak.
+- Percobaan masuk dibatasi 5 kali/menit — pesan "Terlalu banyak percobaan" itu disengaja.
+
+Foto selfie contoh berupa ilustrasi kartun, bukan foto orang.
 
 ## Struktur
 
@@ -38,6 +44,7 @@ yang sama dengan API server di `../server` (lihat `server/README.md`). Akun tiru
 | --- | --- |
 | `src/app` | Layar (Expo Router): `(tabs)` Beranda & Riwayat, `(auth)` masuk/daftar/verifikasi/sandi, `absen`, `detail/[id]`, `profil`, `ganti-sandi` |
 | `src/components` | Komponen UI (`ui/`), form, dan komponen per layar |
-| `src/services` | Akses data (absen, autentikasi, profil) |
+| `src/services` | Akses API: absen, autentikasi (Better Auth), profil |
+| `src/lib/api*.ts`, `src/lib/auth-client.ts` | Alamat server, `apiFetch`, klien Better Auth |
 | `src/hooks`, `src/lib` | Hook data/sesi dan utilitas (tanggal, status absen, pengingat, banner) |
 | `src/constants/theme.ts` | Token desain (warna, font Inter/IBM Plex Serif, jarak, radius) |

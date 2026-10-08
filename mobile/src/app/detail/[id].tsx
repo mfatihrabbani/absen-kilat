@@ -15,6 +15,7 @@ import { PushedScreen } from '@/components/ui/pushed-screen';
 import { AppText } from '@/components/ui/text';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { useAttendanceDetail } from '@/hooks/use-attendance-detail';
+import { authImageSource } from '@/lib/api';
 import { lateMinutes, timeOf } from '@/lib/attendance';
 import { formatLongDate, formatTime, formatTimeWithSeconds, fromDateKey } from '@/lib/date';
 import type { AttendanceType } from '@/types/attendance';
@@ -117,7 +118,7 @@ export default function DetailAbsenScreen() {
           accessibilityLabel={`Foto selfie saat ${TYPE_TITLE[item.type].toLowerCase()} pukul ${formatTime(at)}`}>
           <UserIcon size={72} color={Colors.textMuted} style={styles.photoFallback} />
           <Image
-            source={item.photoUrl}
+            source={authImageSource(item.photoUrl)}
             style={StyleSheet.absoluteFill}
             contentFit="cover"
             transition={200}

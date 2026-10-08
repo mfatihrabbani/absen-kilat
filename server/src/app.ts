@@ -40,10 +40,20 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   });
 };
 
+/**
+ * Teruskan IP klien (hasil `req.ip` Express) ke Better Auth lewat header internal,
+ * agar rate limit dihitung per pengguna; header kiriman klien selalu ditimpa.
+ */
+const withClientIp: RequestHandler = (req, _res, next) => {
+  req.headers['x-absen-client-ip'] = req.ip ?? req.socket.remoteAddress ?? 'unknown';
+  next();
+};
+
 /** Bangun aplikasi Express: middleware umum, file upload statis, dan route API. */
 export function createApp() {
   const app = express();
-  app.set('trust proxy', true);
+  // Percayai X-Forwarded-For hanya dari proxy lokal (mis. Nginx di mesin yang sama).
+  app.set('trust proxy', 'loopback');
   app.use(cors);
 
   app.get('/api/health', (_req, res) => {
@@ -51,7 +61,7 @@ export function createApp() {
   });
 
   // Better Auth membaca body sendiri, jadi dipasang sebelum `express.json()`.
-  app.all('/api/auth/*splat', toNodeHandler(auth));
+  app.all('/api/auth/*splat', withClientIp, toNodeHandler(auth));
 
   app.use(express.json());
   app.use('/uploads', uploadsRouter);

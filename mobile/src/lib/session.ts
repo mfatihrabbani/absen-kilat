@@ -14,7 +14,8 @@ export type SessionState =
   | { status: 'signed-out'; user: null }
   | { status: 'signed-in'; user: SessionUser };
 
-let state: SessionState = { status: 'signed-out', user: null };
+// Mulai 'loading' sampai sesi tersimpan dipulihkan (`bootstrapSession`).
+let state: SessionState = { status: 'loading', user: null };
 const listeners = new Set<() => void>();
 
 /**

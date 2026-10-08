@@ -1,54 +1,47 @@
-import { getSession, setSessionUser } from '@/lib/session';
-import { DEFAULT_NOTIFICATION_PREFS, type NotificationPrefs, type Profile } from '@/types/profile';
+import { apiFetch, appendFile } from '@/lib/api';
+import { authClient } from '@/lib/auth-client';
+import type { PickedImage } from '@/lib/pick-image';
+import { AuthError, patchSessionUser } from '@/services/auth';
+import type { NotificationPrefs, Profile } from '@/types/profile';
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** Preferensi notifikasi tiruan (per sesi aplikasi). */
-let mockPrefs: NotificationPrefs = { ...DEFAULT_NOTIFICATION_PREFS };
-
-/**
- * Profil pengguna yang sedang masuk.
- * Kontrak: `GET /api/profile` → `{ data: Profile }`. Sementara memakai data tiruan.
- */
+/** Profil pengguna yang sedang masuk (`GET /api/profile`); nama & foto di sesi ikut diselaraskan. */
 export async function getProfile(): Promise<Profile> {
-  await delay(250);
-  const user = getSession().user;
-  if (!user) throw new Error('Silakan masuk terlebih dahulu');
-  return { ...user, notificationPrefs: { ...mockPrefs } };
+  const res = await apiFetch<{ data: Profile }>('/api/profile');
+  patchSessionUser({ name: res.data.name, image: res.data.image });
+  return res.data;
 }
 
 /**
- * Ganti foto profil (`null` = hapus, kembali ke avatar inisial).
- * Kontrak: `PUT /api/profile/photo` (multipart `photo`) / `DELETE /api/profile/photo`
- * → `{ data: Profile }`.
+ * Ganti foto profil (`POST /api/profile/photo`, multipart) atau hapus (`DELETE`),
+ * kembali ke avatar inisial. Mengembalikan URL foto baru.
  */
-export async function updateProfilePhoto(image: { uri: string } | null): Promise<string | null> {
-  await delay(500);
-  const user = getSession().user;
-  if (!user) throw new Error('Silakan masuk terlebih dahulu');
-  const next = image?.uri ?? null;
-  setSessionUser({ ...user, image: next });
-  return next;
+export async function updateProfilePhoto(image: PickedImage | null): Promise<string | null> {
+  let res: { data: Profile };
+  if (image) {
+    const form = new FormData();
+    await appendFile(form, 'photo', { uri: image.uri, name: image.fileName, type: image.mimeType });
+    res = await apiFetch<{ data: Profile }>('/api/profile/photo', { method: 'POST', body: form });
+  } else {
+    res = await apiFetch<{ data: Profile }>('/api/profile/photo', { method: 'DELETE' });
+  }
+  patchSessionUser({ image: res.data.image });
+  return res.data.image;
 }
 
-/**
- * Simpan preferensi notifikasi.
- * Kontrak: `PATCH /api/profile` `{ notificationPrefs }` → `{ data: Profile }`.
- */
+/** Simpan preferensi notifikasi (`PUT /api/profile/notifications`). */
 export async function updateNotificationPrefs(prefs: NotificationPrefs): Promise<NotificationPrefs> {
-  await delay(300);
-  mockPrefs = { ...prefs };
-  return mockPrefs;
+  const res = await apiFetch<{ data: Profile }>('/api/profile/notifications', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(prefs),
+  });
+  return res.data.notificationPrefs;
 }
 
-/**
- * Ubah nama tampilan.
- * Kontrak: `PATCH /api/profile` `{ name }` → `{ data: Profile }`.
- */
+/** Ubah nama tampilan lewat Better Auth (`POST /api/auth/update-user`). */
 export async function updateName(name: string): Promise<string> {
-  await delay(500);
-  const user = getSession().user;
-  if (!user) throw new Error('Silakan masuk terlebih dahulu');
-  setSessionUser({ ...user, name });
+  const { error } = await authClient.updateUser({ name });
+  if (error) throw new AuthError(error.message || 'Gagal menyimpan nama. Coba lagi.');
+  patchSessionUser({ name });
   return name;
 }

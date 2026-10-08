@@ -15,7 +15,7 @@ export type AttendanceDto = {
   createdAt: string;
 };
 
-/** URL dasar server sebagaimana diakses klien (mis. `http://192.168.1.5:3000`). */
+/** URL dasar server sebagaimana diakses klien (mis. `http://192.168.1.5:4000`). */
 export const baseUrlOf = (req: Request) => `${req.protocol}://${req.get('host')}`;
 
 /** URL publik untuk file di folder upload; URL absolut (data contoh) dibiarkan apa adanya. */

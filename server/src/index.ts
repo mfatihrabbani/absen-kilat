@@ -5,7 +5,9 @@ import { ensureUploadDirs } from './lib/uploads';
 
 await ensureUploadDirs();
 
-createApp().listen(env.port, '0.0.0.0', () => {
+// Tanpa host: dengarkan IPv4 & IPv6 sekaligus, sehingga `localhost` (::1 atau 127.0.0.1)
+// dan IP LAN sama-sama mencapai server ini.
+createApp().listen(env.port, () => {
   console.log(`Absen Kilat API berjalan di http://localhost:${env.port}`);
   void checkMailer();
 });

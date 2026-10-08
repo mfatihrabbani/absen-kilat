@@ -69,6 +69,8 @@ export const auth = betterAuth({
   },
   trustedOrigins: env.trustedOrigins,
   hooks: { before: passwordRule },
+  // IP klien diisi server (lihat `withClientIp` di app.ts) untuk rate limit per pengguna.
+  advanced: { ipAddress: { ipAddressHeaders: ['x-absen-client-ip'] } },
   // Batasi percobaan login/daftar/OTP per IP untuk mencegah tebak-tebakan kata sandi.
   rateLimit: {
     enabled: true,

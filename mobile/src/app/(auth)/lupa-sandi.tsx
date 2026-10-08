@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Linking, Platform, StyleSheet, TextInput, View } from 'react-native';
 
@@ -16,7 +15,6 @@ import { requestPasswordReset } from '@/services/auth';
 
 /** Lupa kata sandi: minta tautan reset ke email, lalu tampilkan petunjuk cek email. */
 export default function LupaSandiScreen() {
-  const router = useRouter();
   const [step, setStep] = useState<'request' | 'sent'>('request');
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -131,15 +129,6 @@ export default function LupaSandiScreen() {
                 setTimeout(() => emailRef.current?.focus(), 50);
               }}
             />
-            {__DEV__ && (
-              <TextLink
-                label="Simulasikan tautan dari email (dev)"
-                style={styles.center}
-                onPress={() =>
-                  router.push({ pathname: '/atur-sandi', params: { token: 'dev-token' } })
-                }
-              />
-            )}
           </View>
           {notice && (
             <AppText
