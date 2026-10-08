@@ -1,13 +1,32 @@
 import { expo } from '@better-auth/expo';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { emailOTP } from 'better-auth/plugins';
 
 import { db } from './db';
 import { accounts, sessions, users, verifications } from './db/schema';
 import { env } from './env';
-import { verificationEmail } from './lib/email-templates';
+import { resetPasswordEmail, verificationEmail } from './lib/email-templates';
 import { sendMail } from './lib/mailer';
+
+/** Kata sandi baru harus mengandung huruf dan angka (sama dengan aturan di aplikasi). */
+const passwordRule = createAuthMiddleware(async (ctx) => {
+  const field =
+    ctx.path === '/sign-up/email'
+      ? 'password'
+      : ctx.path === '/reset-password' || ctx.path === '/change-password'
+        ? 'newPassword'
+        : null;
+  if (!field) return;
+  const value = (ctx.body as Record<string, unknown> | undefined)?.[field];
+  if (typeof value === 'string' && !(/[a-z]/i.test(value) && /\d/.test(value))) {
+    throw new APIError('BAD_REQUEST', {
+      message: 'Kata sandi harus mengandung huruf dan angka',
+      code: 'PASSWORD_TOO_WEAK',
+    });
+  }
+});
 
 /**
  * Konfigurasi Better Auth: login email & kata sandi (wajib verifikasi email lewat
@@ -27,6 +46,13 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     // Akun baru harus verifikasi email sebelum bisa masuk.
     requireEmailVerification: true,
+    // Lupa kata sandi: tautan berlaku 30 menit dan membuka aplikasi
+    // (`redirectTo` dari klien, mis. `absenkilat://atur-sandi?token=...`).
+    resetPasswordTokenExpiresIn: 30 * 60,
+    revokeSessionsOnPasswordReset: true,
+    async sendResetPassword({ user, url }) {
+      await sendMail(resetPasswordEmail({ to: user.email, url }));
+    },
   },
   emailVerification: {
     // Setelah kode/tautan verifikasi valid, pengguna langsung masuk.
@@ -42,6 +68,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // perpanjang sesi sekali sehari
   },
   trustedOrigins: env.trustedOrigins,
+  hooks: { before: passwordRule },
   // Batasi percobaan login/daftar/OTP per IP untuk mencegah tebak-tebakan kata sandi.
   rateLimit: {
     enabled: true,
@@ -52,6 +79,8 @@ export const auth = betterAuth({
       '/sign-up/email': { window: 60, max: 5 },
       '/email-otp/verify-email': { window: 60, max: 10 },
       '/email-otp/send-verification-otp': { window: 60, max: 3 },
+      '/request-password-reset': { window: 60, max: 3 },
+      '/reset-password': { window: 60, max: 5 },
     },
   },
   plugins: [

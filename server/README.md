@@ -59,6 +59,18 @@ disimpan di secure storage. Semua endpoint `/api/attendance` wajib login (401 bi
      (`absenkilat://email-terverifikasi`, atau `?error=invalid_token` bila gagal).
 3. Kirim ulang kode: `POST /api/auth/email-otp/send-verification-otp` `{ email, type: "email-verification" }`.
 
+### Lupa & atur ulang kata sandi
+
+1. `POST /api/auth/request-password-reset` `{ email, redirectTo: "absenkilat://atur-sandi" }` — selalu
+   sukses (tidak membocorkan email terdaftar); email berisi tautan yang berlaku 30 menit.
+2. Tautan memvalidasi token lalu redirect ke `absenkilat://atur-sandi?token=...`
+   (atau `?error=INVALID_TOKEN`).
+3. `POST /api/auth/reset-password` `{ newPassword, token }` — semua sesi lama dikeluarkan.
+
+Kata sandi baru minimal 8 karakter serta mengandung huruf dan angka (`PASSWORD_TOO_WEAK`).
+
+### Masuk
+
 Masuk: `POST /api/auth/sign-in/email` `{ email, password }` → sesi (cookie). Percobaan login dibatasi
 5 kali/menit per IP (429). Masuk sebelum verifikasi menghasilkan `403 EMAIL_NOT_VERIFIED`. Tanpa `SMTP_HOST`, email dicetak
 ke konsol server (berguna untuk pengembangan).
