@@ -56,6 +56,7 @@ export default function RootLayout() {
           <Stack.Protected guard={canUseApp}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="detail/[id]" />
+            <Stack.Screen name="profil" />
             <Stack.Screen
               name="absen"
               options={{
