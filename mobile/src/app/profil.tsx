@@ -23,10 +23,11 @@ import { ListGroup } from '@/components/ui/list';
 import { PushedScreen } from '@/components/ui/pushed-screen';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/hooks/use-profile';
-import { showFlash } from '@/lib/flash';
+import { setFlash, showFlash } from '@/lib/flash';
 import { hapticTap } from '@/lib/haptics';
 import { pickProfileImage } from '@/lib/pick-image';
-import { syncReminders } from '@/lib/reminders';
+import { clearReminders, syncReminders } from '@/lib/reminders';
+import { signOut } from '@/services/auth';
 import { updateName, updateNotificationPrefs, updateProfilePhoto } from '@/services/profile';
 import type { NotificationPrefs } from '@/types/profile';
 
@@ -43,6 +44,8 @@ export default function ProfilScreen() {
   const [photoSheet, setPhotoSheet] = useState(false);
   const [savingPhoto, setSavingPhoto] = useState(false);
   const [nameSheet, setNameSheet] = useState(false);
+  const [logoutSheet, setLogoutSheet] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const back = { label: 'Absen', fallback: '/' as const };
 
@@ -122,6 +125,23 @@ export default function ProfilScreen() {
     }
   };
 
+  const logout = async () => {
+    setSigningOut(true);
+    try {
+      await clearReminders();
+      // Banner tampil di layar Masuk; navigasi berpindah otomatis saat sesi berakhir.
+      setFlash({ title: 'Kamu sudah keluar', body: 'Masuk lagi untuk mencatat absen.', icon: SignOutIcon });
+      await signOut();
+    } catch (e) {
+      setSigningOut(false);
+      showFlash({
+        title: 'Gagal keluar',
+        body: e instanceof Error ? e.message : 'Coba lagi.',
+        icon: WarningCircleIcon,
+      });
+    }
+  };
+
   const saveName = async (name: string) => {
     await updateName(name);
     setProfile((p) => (p ? { ...p, name } : p));
@@ -170,8 +190,22 @@ export default function ProfilScreen() {
       </View>
 
       <ListGroup>
-        <ProfileRow icon={SignOutIcon} title="Keluar" danger onPress={() => {}} />
+        <ProfileRow
+          icon={SignOutIcon}
+          title={signingOut ? 'Keluar…' : 'Keluar'}
+          danger
+          onPress={signingOut ? undefined : () => setLogoutSheet(true)}
+        />
       </ListGroup>
+
+      {logoutSheet && (
+        <ActionSheet
+          onClose={() => setLogoutSheet(false)}
+          title="Keluar dari Absen Kilat?"
+          message="Kamu perlu masuk lagi untuk mencatat absen."
+          options={[{ label: 'Keluar', danger: true, onPress: logout }]}
+        />
+      )}
 
       {nameSheet && (
         <NameSheet

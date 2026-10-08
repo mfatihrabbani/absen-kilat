@@ -69,3 +69,9 @@ export async function syncReminders(prefs: NotificationPrefs): Promise<boolean> 
   await Promise.all(jobs);
   return true;
 }
+
+/** Batalkan semua pengingat (mis. saat keluar dari akun). */
+export async function clearReminders(): Promise<void> {
+  if (Platform.OS === 'web') return;
+  await Notifications.cancelAllScheduledNotificationsAsync();
+}
