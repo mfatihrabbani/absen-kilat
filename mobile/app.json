@@ -54,6 +54,12 @@
           "cameraPermission": "Absen Kilat memerlukan kamera untuk mengambil foto selfie dan foto profil.",
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#FA5D00"
+        }
       ]
     ],
     "experiments": {

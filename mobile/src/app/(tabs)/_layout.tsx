@@ -1,10 +1,20 @@
 import { Tabs } from 'expo-router/js-tabs';
+import { useEffect } from 'react';
 
 import { CalendarBlankIcon, FingerprintIcon } from '@/components/icons';
 import { Colors, Fonts } from '@/constants/theme';
+import { syncReminders } from '@/lib/reminders';
+import { getProfile } from '@/services/profile';
 
 /** Tab bar bawah (`mobile-tabs` layout): Absen (beranda) dan Riwayat. */
 export default function TabsLayout() {
+  // Jadwalkan pengingat sesuai preferensi akun setiap kali aplikasi dibuka.
+  useEffect(() => {
+    getProfile()
+      .then((p) => syncReminders(p.notificationPrefs))
+      .catch(() => {});
+  }, []);
+
   return (
     <Tabs
       screenOptions={{

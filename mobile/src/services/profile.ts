@@ -17,10 +17,6 @@ export async function getProfile(): Promise<Profile> {
   return { ...user, notificationPrefs: { ...mockPrefs } };
 }
 
-export function setMockPrefs(prefs: NotificationPrefs) {
-  mockPrefs = prefs;
-}
-
 /**
  * Ganti foto profil (`null` = hapus, kembali ke avatar inisial).
  * Kontrak: `PUT /api/profile/photo` (multipart `photo`) / `DELETE /api/profile/photo`
@@ -33,4 +29,26 @@ export async function updateProfilePhoto(image: { uri: string } | null): Promise
   const next = image?.uri ?? null;
   setSessionUser({ ...user, image: next });
   return next;
+}
+
+/**
+ * Simpan preferensi notifikasi.
+ * Kontrak: `PATCH /api/profile` `{ notificationPrefs }` → `{ data: Profile }`.
+ */
+export async function updateNotificationPrefs(prefs: NotificationPrefs): Promise<NotificationPrefs> {
+  await delay(300);
+  mockPrefs = { ...prefs };
+  return mockPrefs;
+}
+
+/**
+ * Ubah nama tampilan.
+ * Kontrak: `PATCH /api/profile` `{ name }` → `{ data: Profile }`.
+ */
+export async function updateName(name: string): Promise<string> {
+  await delay(500);
+  const user = getSession().user;
+  if (!user) throw new Error('Silakan masuk terlebih dahulu');
+  setSessionUser({ ...user, name });
+  return name;
 }

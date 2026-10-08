@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { NameSheet } from '@/components/profil/name-sheet';
 import { ProfileHeader } from '@/components/profil/profile-header';
 import { GroupLabel, ProfileRow, SwitchRow } from '@/components/profil/rows';
 import {
@@ -22,8 +23,10 @@ import { PushedScreen } from '@/components/ui/pushed-screen';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/hooks/use-profile';
 import { setFlash } from '@/lib/flash';
+import { hapticTap } from '@/lib/haptics';
 import { pickProfileImage } from '@/lib/pick-image';
-import { updateProfilePhoto } from '@/services/profile';
+import { syncReminders } from '@/lib/reminders';
+import { updateName, updateNotificationPrefs, updateProfilePhoto } from '@/services/profile';
 import type { NotificationPrefs } from '@/types/profile';
 
 const NOTIFICATIONS: { key: keyof NotificationPrefs; title: string; subtitle: string }[] = [
@@ -37,6 +40,7 @@ export default function ProfilScreen() {
   const { profile, setProfile, error, reload } = useProfile();
   const [photoSheet, setPhotoSheet] = useState(false);
   const [savingPhoto, setSavingPhoto] = useState(false);
+  const [nameSheet, setNameSheet] = useState(false);
 
   const back = { label: 'Absen', fallback: '/' as const };
 
@@ -91,8 +95,36 @@ export default function ProfilScreen() {
     }
   };
 
-  const setPref = (key: keyof NotificationPrefs, value: boolean) =>
-    setProfile({ ...profile, notificationPrefs: { ...profile.notificationPrefs, [key]: value } });
+  const setPref = async (key: keyof NotificationPrefs, value: boolean) => {
+    const previous = profile.notificationPrefs;
+    const next = { ...previous, [key]: value };
+    hapticTap();
+    setProfile((p) => (p ? { ...p, notificationPrefs: next } : p));
+    try {
+      await updateNotificationPrefs(next);
+      const allowed = await syncReminders(next);
+      if (!allowed) {
+        setFlash({
+          title: 'Izin notifikasi ditolak',
+          body: 'Aktifkan notifikasi Absen Kilat di Pengaturan agar pengingat muncul.',
+          icon: WarningCircleIcon,
+        });
+      }
+    } catch (e) {
+      setProfile((p) => (p ? { ...p, notificationPrefs: previous } : p));
+      setFlash({
+        title: 'Gagal menyimpan pengaturan',
+        body: e instanceof Error ? e.message : 'Coba lagi.',
+        icon: WarningCircleIcon,
+      });
+    }
+  };
+
+  const saveName = async (name: string) => {
+    await updateName(name);
+    setProfile((p) => (p ? { ...p, name } : p));
+    setFlash({ title: 'Nama diperbarui', body: name });
+  };
 
   return (
     <PushedScreen title="Profil Saya" back={back}>
@@ -105,7 +137,12 @@ export default function ProfilScreen() {
       <View>
         <GroupLabel>Akun</GroupLabel>
         <ListGroup>
-          <ProfileRow icon={UserIcon} title="Nama" subtitle={profile.name} onPress={() => {}} />
+          <ProfileRow
+            icon={UserIcon}
+            title="Nama"
+            subtitle={profile.name}
+            onPress={() => setNameSheet(true)}
+          />
           <ProfileRow icon={EnvelopeSimpleIcon} title="Email" subtitle={profile.email} />
           <ProfileRow icon={LockKeyIcon} title="Ganti kata sandi" onPress={() => {}} />
         </ListGroup>
@@ -129,6 +166,14 @@ export default function ProfilScreen() {
       <ListGroup>
         <ProfileRow icon={SignOutIcon} title="Keluar" danger onPress={() => {}} />
       </ListGroup>
+
+      {nameSheet && (
+        <NameSheet
+          initialName={profile.name}
+          onClose={() => setNameSheet(false)}
+          onSave={saveName}
+        />
+      )}
 
       {photoSheet && (
         <ActionSheet
