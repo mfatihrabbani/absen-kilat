@@ -29,6 +29,8 @@ import { useCurrentLocation } from '@/hooks/use-current-location';
 import { useNow } from '@/hooks/use-now';
 import { useTodayAttendance } from '@/hooks/use-today-attendance';
 import { formatTime } from '@/lib/date';
+import { setFlash as setFlashMessage } from '@/lib/flash';
+import { hapticSuccess, hapticTap } from '@/lib/haptics';
 import { createAttendance } from '@/services/attendance';
 
 /** Layar "Absen Sekarang": kamera selfie + GPS untuk absen masuk/keluar. */
@@ -57,6 +59,7 @@ export default function AbsenScreen() {
     setCapturing(true);
     setError(null);
     setCapturedAt(new Date());
+    hapticTap();
     const shot = await camera.current?.capture();
     setCapturing(false);
     if (shot) setPhoto(shot);
@@ -70,13 +73,24 @@ export default function AbsenScreen() {
 
   const submit = async () => {
     if (!photo || location.status !== 'ready' || (phase !== 'in' && phase !== 'out')) return;
-    await createAttendance({
+    const saved = await createAttendance({
       type: phase,
       photoUri: photo.uri,
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
       accuracy: location.coords.accuracy,
     });
+    // Banner sukses ditampilkan oleh layar tujuan (beranda) begitu kembali fokus.
+    const time = formatTime(new Date(saved.timestamp));
+    setFlashMessage(
+      saved.type === 'in'
+        ? {
+            title: 'Absen masuk tercatat',
+            body: `Pukul ${time} · ${saved.status === 'late' ? 'Terlambat' : 'Tepat waktu'}`,
+          }
+        : { title: 'Absen keluar tercatat', body: `Pukul ${time}. Sampai jumpa besok!` },
+    );
+    hapticSuccess();
     close();
   };
 
