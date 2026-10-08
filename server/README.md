@@ -86,6 +86,7 @@ Semua tanggal memakai zona waktu kantor (WIB). Error dikirim sebagai `{ "error":
 | `GET /api/attendance?from=YYYY-MM-DD&to=YYYY-MM-DD` | Absen pada rentang tanggal (maks. 366 hari) |
 | `GET /api/profile` | Profil: `id`, `name`, `email`, `emailVerified`, `image`, `notificationPrefs` |
 | `PUT /api/profile/notifications` | Simpan preferensi `{ reminderIn?, reminderOut?, weekly? }` (boolean) |
+| `PUT /api/profile/password` | Ganti kata sandi `{ currentPassword, newPassword }`; sesi perangkat lain dikeluarkan |
 | `GET /api/attendance/today` | Status absen hari ini: `in`, `out`, `next` (`in`/`out`/`done`), jam kerja, waktu server |
 | `GET /api/attendance/:id` | Detail satu absen |
 | `POST /api/attendance` | Catat absen (multipart: `photo`, `type` = `in`/`out`, `latitude`, `longitude`, `accuracy`). Waktu & status (`on_time`/`late`, batas 08.00) ditentukan server. Satu absen masuk & satu absen keluar per hari; keluar hanya setelah masuk (409 bila melanggar). |
