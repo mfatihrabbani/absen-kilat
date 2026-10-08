@@ -23,6 +23,8 @@ type Props = {
   accessibilityLabel: string;
   /** Render-prop menerima `close(after?)` untuk menutup dengan animasi lalu menjalankan `after`. */
   children: (close: Close) => ReactNode;
+  /** `false` untuk mengunci sheet (mis. saat mengirim): latar, seret, dan tombol kembali diabaikan. */
+  dismissible?: boolean;
 };
 
 const OFFSCREEN = Dimensions.get('window').height;
@@ -33,7 +35,13 @@ const CLOSE_MS = 220;
  * Bottom sheet modal (`.ak-sheet`): geser naik saat dibuka, bisa ditutup dengan
  * menyeret pegangan ke bawah, mengetuk latar, atau tombol kembali Android.
  */
-export function BottomSheet({ visible, onClose, accessibilityLabel, children }: Props) {
+export function BottomSheet({
+  visible,
+  onClose,
+  accessibilityLabel,
+  children,
+  dismissible = true,
+}: Props) {
   const insets = useSafeAreaInsets();
   const translateY = useSharedValue(OFFSCREEN);
   const closing = useSharedValue(false);
@@ -57,9 +65,12 @@ export function BottomSheet({ visible, onClose, accessibilityLabel, children }: 
     }, CLOSE_MS);
   };
 
-  const dismiss = () => close();
+  const dismiss = () => {
+    if (dismissible) close();
+  };
 
   const pan = Gesture.Pan()
+    .enabled(dismissible)
     .onUpdate((e) => {
       translateY.value = Math.max(0, e.translationY);
     })

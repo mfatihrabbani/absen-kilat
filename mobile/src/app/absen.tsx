@@ -6,6 +6,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CameraHeader, RoundButton, ShutterButton } from '@/components/absen/camera-chrome';
+import { ConfirmSheet } from '@/components/absen/confirm-sheet';
 import { GpsPill } from '@/components/absen/gps-pill';
 import {
   SelfieCamera,
@@ -28,6 +29,7 @@ import { useCurrentLocation } from '@/hooks/use-current-location';
 import { useNow } from '@/hooks/use-now';
 import { useTodayAttendance } from '@/hooks/use-today-attendance';
 import { formatTime } from '@/lib/date';
+import { createAttendance } from '@/services/attendance';
 
 /** Layar "Absen Sekarang": kamera selfie + GPS untuk absen masuk/keluar. */
 export default function AbsenScreen() {
@@ -44,6 +46,7 @@ export default function AbsenScreen() {
   const [ready, setReady] = useState(false);
   const [capturing, setCapturing] = useState(false);
   const [photo, setPhoto] = useState<CapturedPhoto | null>(null);
+  const [capturedAt, setCapturedAt] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
@@ -53,6 +56,7 @@ export default function AbsenScreen() {
     if (capturing || back) return;
     setCapturing(true);
     setError(null);
+    setCapturedAt(new Date());
     const shot = await camera.current?.capture();
     setCapturing(false);
     if (shot) setPhoto(shot);
@@ -63,6 +67,22 @@ export default function AbsenScreen() {
     setPhoto(null);
     setError(null);
   };
+
+  const submit = async () => {
+    if (!photo || location.status !== 'ready' || (phase !== 'in' && phase !== 'out')) return;
+    await createAttendance({
+      type: phase,
+      photoUri: photo.uri,
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      accuracy: location.coords.accuracy,
+    });
+    close();
+  };
+
+  // Sheet konfirmasi terbuka begitu foto diambil dan lokasi GPS sudah siap.
+  const confirming =
+    !!photo && !!capturedAt && location.status === 'ready' && (phase === 'in' || phase === 'out');
 
   const guide = error
     ? error
@@ -103,7 +123,7 @@ export default function AbsenScreen() {
           </View>
         ) : (
           <>
-            <GpsPill location={location} />
+            <GpsPill location={location} waiting={!!photo} />
             <SelfieCamera
               ref={camera}
               facing={facing}
@@ -153,6 +173,16 @@ export default function AbsenScreen() {
             <CameraRotateIcon size={22} color={CameraColors.ink} />
           </RoundButton>
         </View>
+      )}
+      {confirming && (
+        <ConfirmSheet
+          type={phase}
+          photo={photo}
+          coords={location.coords}
+          capturedAt={capturedAt}
+          onRetake={retake}
+          onSubmit={submit}
+        />
       )}
     </View>
   );

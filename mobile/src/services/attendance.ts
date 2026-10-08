@@ -1,5 +1,5 @@
-import { mockFindById, mockListRange } from '@/mocks/attendances';
-import type { Attendance } from '@/types/attendance';
+import { mockCreate, mockFindById, mockListRange } from '@/mocks/attendances';
+import type { Attendance, AttendanceType } from '@/types/attendance';
 
 /** Simulasi latensi jaringan supaya state loading ikut teruji. */
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -27,4 +27,30 @@ export async function listAttendances(query: AttendanceQuery): Promise<Attendanc
 export async function getAttendance(id: number): Promise<Attendance | null> {
   await delay(200);
   return mockFindById(id) ?? null;
+}
+
+export type NewAttendance = {
+  type: AttendanceType;
+  /** URI lokal foto selfie dari kamera. */
+  photoUri: string;
+  latitude: number | null;
+  longitude: number | null;
+  accuracy: number | null;
+};
+
+/**
+ * Catat absen masuk/keluar. Waktu & status (tepat waktu/terlambat) ditentukan server.
+ * Kontrak: `POST /api/attendance` (multipart: `photo`, `type`, `latitude`, `longitude`,
+ * `accuracy`) → `201 { data: Attendance }`.
+ */
+export async function createAttendance(input: NewAttendance): Promise<Attendance> {
+  await delay(900);
+  return mockCreate({
+    type: input.type,
+    photoUrl: input.photoUri,
+    latitude: input.latitude,
+    longitude: input.longitude,
+    accuracy: input.accuracy,
+    timestamp: new Date().toISOString(),
+  });
 }

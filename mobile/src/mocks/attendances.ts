@@ -95,3 +95,16 @@ export function mockListRange(from: string, to: string): Attendance[] {
 export function mockFindById(id: number): Attendance | undefined {
   return mockAttendances.find((a) => a.id === id);
 }
+
+/** Simpan absen baru ke data tiruan (pengganti `POST /api/attendance`). */
+export function mockCreate(input: Omit<Attendance, 'id' | 'status' | 'createdAt'>): Attendance {
+  const at = new Date(input.timestamp);
+  const created: Attendance = {
+    ...input,
+    id: nextId++,
+    status: input.type === 'in' && minutesOf(at) > Shift.start ? 'late' : 'on_time',
+    createdAt: new Date().toISOString(),
+  };
+  mockAttendances.push(created);
+  return created;
+}
