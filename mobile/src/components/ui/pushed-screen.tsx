@@ -85,7 +85,9 @@ export function PushedScreen({ title, back, actions, children, keyboardShouldPer
       <Animated.ScrollView
         onScroll={onScroll}
         scrollEventThrottle={16}
-        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps ?? 'handled'}
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.eight }]}>
         {children}
       </Animated.ScrollView>

@@ -8,50 +8,39 @@ import type { Icon } from 'phosphor-react-native';
 
 export type { Icon, IconProps } from 'phosphor-react-native';
 
-export const ArrowCounterClockwiseIcon: Icon =
-  require('phosphor-react-native/src/icons/ArrowCounterClockwise').ArrowCounterClockwiseIcon;
-export const ArrowDownLeftIcon: Icon =
-  require('phosphor-react-native/src/icons/ArrowDownLeft').ArrowDownLeftIcon;
-export const ArrowUpRightIcon: Icon =
-  require('phosphor-react-native/src/icons/ArrowUpRight').ArrowUpRightIcon;
-export const BriefcaseIcon: Icon =
-  require('phosphor-react-native/src/icons/Briefcase').BriefcaseIcon;
-export const CalendarBlankIcon: Icon =
-  require('phosphor-react-native/src/icons/CalendarBlank').CalendarBlankIcon;
-export const CalendarDotsIcon: Icon =
-  require('phosphor-react-native/src/icons/CalendarDots').CalendarDotsIcon;
-export const CalendarXIcon: Icon =
-  require('phosphor-react-native/src/icons/CalendarX').CalendarXIcon;
-export const CameraIcon: Icon = require('phosphor-react-native/src/icons/Camera').CameraIcon;
-export const CameraRotateIcon: Icon =
-  require('phosphor-react-native/src/icons/CameraRotate').CameraRotateIcon;
-export const CaretLeftIcon: Icon =
-  require('phosphor-react-native/src/icons/CaretLeft').CaretLeftIcon;
-export const CaretRightIcon: Icon =
-  require('phosphor-react-native/src/icons/CaretRight').CaretRightIcon;
-export const CheckCircleIcon: Icon =
-  require('phosphor-react-native/src/icons/CheckCircle').CheckCircleIcon;
-export const CheckIcon: Icon = require('phosphor-react-native/src/icons/Check').CheckIcon;
-export const ClockCountdownIcon: Icon =
-  require('phosphor-react-native/src/icons/ClockCountdown').ClockCountdownIcon;
-export const ClockIcon: Icon = require('phosphor-react-native/src/icons/Clock').ClockIcon;
-export const CoffeeIcon: Icon = require('phosphor-react-native/src/icons/Coffee').CoffeeIcon;
-export const FingerprintIcon: Icon =
-  require('phosphor-react-native/src/icons/Fingerprint').FingerprintIcon;
-export const LightningIcon: Icon =
-  require('phosphor-react-native/src/icons/Lightning').LightningIcon;
-export const LightningSlashIcon: Icon =
-  require('phosphor-react-native/src/icons/LightningSlash').LightningSlashIcon;
-export const MapPinIcon: Icon = require('phosphor-react-native/src/icons/MapPin').MapPinIcon;
-export const MinusIcon: Icon = require('phosphor-react-native/src/icons/Minus').MinusIcon;
-export const PaperPlaneTiltIcon: Icon =
-  require('phosphor-react-native/src/icons/PaperPlaneTilt').PaperPlaneTiltIcon;
-export const SignInIcon: Icon = require('phosphor-react-native/src/icons/SignIn').SignInIcon;
-export const SignOutIcon: Icon = require('phosphor-react-native/src/icons/SignOut').SignOutIcon;
-export const TimerIcon: Icon = require('phosphor-react-native/src/icons/Timer').TimerIcon;
-export const UserFocusIcon: Icon =
-  require('phosphor-react-native/src/icons/UserFocus').UserFocusIcon;
-export const UserIcon: Icon = require('phosphor-react-native/src/icons/User').UserIcon;
-export const WarningCircleIcon: Icon =
-  require('phosphor-react-native/src/icons/WarningCircle').WarningCircleIcon;
-export const XIcon: Icon = require('phosphor-react-native/src/icons/X').XIcon;
+/** Ambil komponen ikon `<Nama>Icon` dari berkas ikon Phosphor. */
+const load = (mod: Record<string, Icon>, name: string): Icon => mod[`${name}Icon`]!;
+
+export const ArrowCounterClockwiseIcon = load(require('phosphor-react-native/src/icons/ArrowCounterClockwise'), 'ArrowCounterClockwise');
+export const ArrowDownLeftIcon = load(require('phosphor-react-native/src/icons/ArrowDownLeft'), 'ArrowDownLeft');
+export const ArrowUpRightIcon = load(require('phosphor-react-native/src/icons/ArrowUpRight'), 'ArrowUpRight');
+export const BriefcaseIcon = load(require('phosphor-react-native/src/icons/Briefcase'), 'Briefcase');
+export const CalendarBlankIcon = load(require('phosphor-react-native/src/icons/CalendarBlank'), 'CalendarBlank');
+export const CalendarDotsIcon = load(require('phosphor-react-native/src/icons/CalendarDots'), 'CalendarDots');
+export const CalendarXIcon = load(require('phosphor-react-native/src/icons/CalendarX'), 'CalendarX');
+export const CameraIcon = load(require('phosphor-react-native/src/icons/Camera'), 'Camera');
+export const CameraRotateIcon = load(require('phosphor-react-native/src/icons/CameraRotate'), 'CameraRotate');
+export const CaretLeftIcon = load(require('phosphor-react-native/src/icons/CaretLeft'), 'CaretLeft');
+export const CaretRightIcon = load(require('phosphor-react-native/src/icons/CaretRight'), 'CaretRight');
+export const CheckIcon = load(require('phosphor-react-native/src/icons/Check'), 'Check');
+export const CheckCircleIcon = load(require('phosphor-react-native/src/icons/CheckCircle'), 'CheckCircle');
+export const ClockIcon = load(require('phosphor-react-native/src/icons/Clock'), 'Clock');
+export const ClockCountdownIcon = load(require('phosphor-react-native/src/icons/ClockCountdown'), 'ClockCountdown');
+export const CoffeeIcon = load(require('phosphor-react-native/src/icons/Coffee'), 'Coffee');
+export const EnvelopeSimpleIcon = load(require('phosphor-react-native/src/icons/EnvelopeSimple'), 'EnvelopeSimple');
+export const EnvelopeSimpleOpenIcon = load(require('phosphor-react-native/src/icons/EnvelopeSimpleOpen'), 'EnvelopeSimpleOpen');
+export const EyeIcon = load(require('phosphor-react-native/src/icons/Eye'), 'Eye');
+export const EyeSlashIcon = load(require('phosphor-react-native/src/icons/EyeSlash'), 'EyeSlash');
+export const FingerprintIcon = load(require('phosphor-react-native/src/icons/Fingerprint'), 'Fingerprint');
+export const LightningIcon = load(require('phosphor-react-native/src/icons/Lightning'), 'Lightning');
+export const LightningSlashIcon = load(require('phosphor-react-native/src/icons/LightningSlash'), 'LightningSlash');
+export const MapPinIcon = load(require('phosphor-react-native/src/icons/MapPin'), 'MapPin');
+export const MinusIcon = load(require('phosphor-react-native/src/icons/Minus'), 'Minus');
+export const PaperPlaneTiltIcon = load(require('phosphor-react-native/src/icons/PaperPlaneTilt'), 'PaperPlaneTilt');
+export const SignInIcon = load(require('phosphor-react-native/src/icons/SignIn'), 'SignIn');
+export const SignOutIcon = load(require('phosphor-react-native/src/icons/SignOut'), 'SignOut');
+export const TimerIcon = load(require('phosphor-react-native/src/icons/Timer'), 'Timer');
+export const UserIcon = load(require('phosphor-react-native/src/icons/User'), 'User');
+export const UserFocusIcon = load(require('phosphor-react-native/src/icons/UserFocus'), 'UserFocus');
+export const WarningCircleIcon = load(require('phosphor-react-native/src/icons/WarningCircle'), 'WarningCircle');
+export const XIcon = load(require('phosphor-react-native/src/icons/X'), 'X');
