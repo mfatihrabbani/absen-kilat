@@ -10,7 +10,7 @@ import { db } from '../db';
 import { users } from '../db/schema';
 import { HttpError } from '../lib/http-error';
 import { notificationPrefsSchema, parsePrefs, toProfileDto } from '../lib/profile';
-import { photoUpload, removePhoto, savePhoto } from '../lib/uploads';
+import { AVATAR_DIR, avatarUpload, removePhoto, savePhoto } from '../lib/uploads';
 import { requireUser, userIdOf } from '../middleware/current-user';
 
 export const profileRouter = Router();
@@ -100,11 +100,11 @@ async function replacePhoto(userId: string, photoPath: string | null) {
   return updated ?? user;
 }
 
-/** `POST /api/profile/photo` (multipart `photo`, gambar maks. 8 MB) → `{ data: Profile }`. */
-profileRouter.post('/photo', photoUpload.single('photo'), async (req, res) => {
+/** `POST /api/profile/photo` (multipart `photo`, gambar maks. `AVATAR_MAX_MB`) → `{ data: Profile }`. */
+profileRouter.post('/photo', avatarUpload.single('photo'), async (req, res) => {
   if (!req.file) throw new HttpError(400, 'Pilih foto terlebih dahulu');
   const userId = userIdOf(req);
-  const photoPath = await savePhoto(`avatars/${userId}`, req.file);
+  const photoPath = await savePhoto(`${AVATAR_DIR}/${userId}`, req.file);
   try {
     res.status(201).json({ data: toProfileDto(req, await replacePhoto(userId, photoPath)) });
   } catch (e) {

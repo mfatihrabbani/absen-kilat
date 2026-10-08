@@ -35,12 +35,21 @@ Akun contoh dari `db:seed`: **rina.kartika@contoh.id** / **rahasia123**.
 | --- | --- | --- |
 | `PORT` | `3000` | Port HTTP |
 | `DATABASE_URL` | `file:./data/absen-kilat.db` | Lokasi database SQLite |
-| `UPLOAD_DIR` | `./uploads` | Folder foto absen |
+| `UPLOAD_DIR` | `./uploads` | Folder foto absen & foto profil |
+| `ATTENDANCE_PHOTO_MAX_MB` / `AVATAR_MAX_MB` | `8` / `5` | Batas ukuran foto absen / foto profil |
 | `BETTER_AUTH_URL` | `http://localhost:PORT` | URL publik server untuk Better Auth |
 | `BETTER_AUTH_SECRET` | secret pengembangan | **Wajib** diisi di produksi |
 | `TRUSTED_ORIGINS` | `absenkilat://,exp://,http://localhost:8081` | Asal yang dipercaya untuk request auth |
 | `APP_VERIFIED_URL` | `absenkilat://email-terverifikasi` | Tujuan redirect tautan verifikasi |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | — | Pengiriman email; kosongkan host untuk mode konsol |
+
+## Penyimpanan file
+
+Foto disimpan di `UPLOAD_DIR` dan dilayani lewat `/uploads`:
+
+- `uploads/avatars/<userId>/<uuid>.<ext>` — foto profil, **publik**, cache 30 hari (nama file unik).
+- `uploads/<userId>/<YYYY-MM>/<uuid>.<ext>` — selfie absen, **privat**: hanya pemilik yang sudah
+  login yang bisa membukanya (401 tanpa sesi, 404 untuk pengguna lain).
 
 ## Autentikasi
 

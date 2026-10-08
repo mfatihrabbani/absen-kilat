@@ -9,6 +9,9 @@ export const env = {
   port: Number(process.env.PORT ?? 3000),
   databaseUrl: process.env.DATABASE_URL ?? 'file:./data/absen-kilat.db',
   uploadDir: path.resolve(process.env.UPLOAD_DIR ?? './uploads'),
+  /** Batas ukuran foto (MB): foto absen dan foto profil. */
+  attendancePhotoMaxMb: Number(process.env.ATTENDANCE_PHOTO_MAX_MB ?? 8),
+  avatarMaxMb: Number(process.env.AVATAR_MAX_MB ?? 5),
   /** URL publik server, dipakai Better Auth untuk tautan & cookie. */
   authUrl: process.env.BETTER_AUTH_URL ?? `http://localhost:${process.env.PORT ?? 3000}`,
   authSecret: process.env.BETTER_AUTH_SECRET ?? devSecret(),

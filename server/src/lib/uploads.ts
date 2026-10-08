@@ -7,7 +7,6 @@ import multer from 'multer';
 import { env } from '../env';
 import { HttpError } from './http-error';
 
-const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const EXT_BY_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
@@ -15,15 +14,31 @@ const EXT_BY_MIME: Record<string, string> = {
   'image/heic': 'heic',
 };
 
-/** Multer: simpan unggahan foto di memori (maks. 8 MB, hanya gambar) sebelum ditulis ke disk. */
-export const photoUpload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_PHOTO_BYTES, files: 1 },
-  fileFilter: (_req, file, cb) => {
-    if (EXT_BY_MIME[file.mimetype]) cb(null, true);
-    else cb(new HttpError(415, 'Foto harus berupa gambar JPEG, PNG, WEBP, atau HEIC'));
-  },
-});
+/** Multer untuk satu foto di memori (hanya gambar, maks. `maxMb`) sebelum ditulis ke disk. */
+function imageUpload(maxMb: number) {
+  return multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: maxMb * 1024 * 1024, files: 1 },
+    fileFilter: (_req, file, cb) => {
+      if (EXT_BY_MIME[file.mimetype]) cb(null, true);
+      else cb(new HttpError(415, 'Foto harus berupa gambar JPEG, PNG, WEBP, atau HEIC'));
+    },
+  });
+}
+
+/** Unggahan foto selfie absen (`ATTENDANCE_PHOTO_MAX_MB`, bawaan 8 MB). */
+export const photoUpload = imageUpload(env.attendancePhotoMaxMb);
+
+/** Unggahan foto profil (`AVATAR_MAX_MB`, bawaan 5 MB). */
+export const avatarUpload = imageUpload(env.avatarMaxMb);
+
+/** Subfolder foto profil di dalam `UPLOAD_DIR` (publik); folder lain = foto absen per pengguna (privat). */
+export const AVATAR_DIR = 'avatars';
+
+/** Pastikan folder upload ada saat server mulai. */
+export async function ensureUploadDirs() {
+  await mkdir(path.join(env.uploadDir, AVATAR_DIR), { recursive: true });
+}
 
 /**
  * Tulis foto ke `UPLOAD_DIR/<folder>/<uuid>.<ext>` dan kembalikan path relatifnya

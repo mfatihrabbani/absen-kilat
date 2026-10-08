@@ -3,10 +3,10 @@ import express, { type ErrorRequestHandler, type RequestHandler } from 'express'
 import multer from 'multer';
 
 import { auth } from './auth';
-import { env } from './env';
 import { HttpError } from './lib/http-error';
 import { attendanceRouter } from './routes/attendance';
 import { profileRouter } from './routes/profile';
+import { uploadsRouter } from './routes/uploads';
 import { verifyLinkRouter } from './routes/verify-link';
 
 /** CORS sederhana: izinkan asal mana pun (aplikasi Expo web/dev) dengan kredensial. */
@@ -54,7 +54,7 @@ export function createApp() {
   app.all('/api/auth/*splat', toNodeHandler(auth));
 
   app.use(express.json());
-  app.use('/uploads', express.static(env.uploadDir, { maxAge: '7d', fallthrough: false }));
+  app.use('/uploads', uploadsRouter);
   app.use('/api/attendance', attendanceRouter);
   app.use('/api/profile', profileRouter);
   app.use('/api', verifyLinkRouter);
